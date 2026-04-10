@@ -3,6 +3,7 @@ import { supabase } from '../supabase'
 import Modern from '../templates/Modern'
 import Elegant from '../templates/Elegant'
 import Bold from '../templates/Bold'
+import SupportChat from '../components/SupportChat'
 
 const TEMPLATES = { modern: Modern, elegant: Elegant, bold: Bold }
 
@@ -133,6 +134,9 @@ export default function SiteView() {
       <div ref={contentRef} className={`pt-[45px] ${editing ? 'cursor-text' : ''}`}>
         <Template site={site} editable={editing} />
       </div>
+
+      {/* Support chat widget — visible on the generated site */}
+      {!editing && bizId && <SupportChat businessId={bizId} businessName={site.name} accentColor={site.colors?.accent} />}
 
       {/* Edit mode hint */}
       {editing && (
