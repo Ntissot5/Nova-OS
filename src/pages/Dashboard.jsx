@@ -96,8 +96,16 @@ export default function Dashboard() {
                     </div>
                     <a href={business.site_url} target="_blank" rel="noreferrer" className="px-4 py-2 rounded-lg text-xs bg-accent/10 text-accent border border-accent/20 hover:bg-accent/20 transition-all">Voir mon site</a>
                   </div>
+                ) : business?.site_config?.name ? (
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-sm font-semibold mb-1">{business.site_config.name}</div>
+                      <div className="text-xs text-white/25">{business.site_config.slogan}</div>
+                    </div>
+                    <a href="/my-site" className="px-4 py-2 rounded-lg text-xs bg-accent/10 text-accent border border-accent/20 hover:bg-accent/20">Voir mon site →</a>
+                  </div>
                 ) : (
-                  <p className="text-sm text-white/25">Votre site est en cours de déploiement...</p>
+                  <p className="text-sm text-white/25">Aucun site généré.</p>
                 )}
               </div>
             </div>
