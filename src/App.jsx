@@ -1,152 +1,184 @@
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+
+function SiteMockup({ name, color }) {
+  return (
+    <div className="rounded-xl border border-white/[0.06] bg-dark-card overflow-hidden">
+      <div className="flex items-center gap-1.5 px-3 py-2 border-b border-white/[0.04]">
+        <div className="w-2 h-2 rounded-full bg-white/10" /><div className="w-2 h-2 rounded-full bg-white/10" /><div className="w-2 h-2 rounded-full bg-white/10" />
+        <span className="text-[9px] text-white/15 ml-2 font-mono">{name?.toLowerCase().replace(/\s+/g, '')}.novaos.io</span>
+      </div>
+      <div className="p-4">
+        <div className="h-2 w-16 rounded bg-white/10 mb-3" />
+        <div className="h-6 w-40 rounded mb-2" style={{ background: `${color}30` }} />
+        <div className="h-2 w-32 rounded bg-white/[0.05] mb-4" />
+        <div className="h-6 w-20 rounded" style={{ background: color }} />
+      </div>
+    </div>
+  )
+}
 
 export default function App() {
+  const [input, setInput] = useState('')
+  const navigate = useNavigate()
+
+  const start = (e) => {
+    e.preventDefault()
+    if (input.trim()) {
+      localStorage.setItem('novaos-desc', input)
+      navigate('/onboarding')
+    } else {
+      navigate('/onboarding')
+    }
+  }
+
   return (
-    <div className="min-h-screen text-white bg-glow">
-      <div className="bg-grid min-h-screen">
+    <div className="min-h-screen text-white bg-dark">
+      {/* Subtle bg */}
+      <div className="fixed inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(79,159,255,0.04) 0%, transparent 70%)' }} />
 
       {/* Nav */}
-      <nav className="flex items-center justify-between px-6 lg:px-12 py-5 border-b border-white/[0.06]">
+      <nav className="relative z-10 flex items-center justify-between px-6 lg:px-12 py-4 border-b border-white/[0.04]">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-accent/10 border border-accent/20 flex items-center justify-center"><div className="w-2.5 h-2.5 rounded-sm bg-accent" /></div>
-          <span className="text-[15px] font-bold">Nova OS</span>
+          <div className="w-6 h-6 rounded-lg bg-accent/15 flex items-center justify-center"><div className="w-2 h-2 rounded-sm bg-accent" /></div>
+          <span className="text-sm font-bold">Nova OS</span>
         </div>
-        <div className="hidden md:flex items-center gap-8 text-sm text-white/30">
+        <div className="hidden md:flex items-center gap-6 text-[13px] text-white/25">
           <a href="#how" className="hover:text-white/50">Comment</a>
-          <a href="#features" className="hover:text-white/50">Fonctions</a>
+          <a href="#examples" className="hover:text-white/50">Exemples</a>
           <a href="#pricing" className="hover:text-white/50">Tarifs</a>
         </div>
         <div className="flex items-center gap-3">
-          <a href="/login" className="text-sm text-white/30 px-3 py-2 hidden md:block hover:text-white/50">Connexion</a>
-          <Link to="/onboarding" className="text-sm bg-accent text-black font-semibold px-5 py-2 rounded-lg hover:brightness-110">Commencer →</Link>
+          <a href="/login" className="text-[13px] text-white/25 px-3 py-1.5 hidden md:block hover:text-white/50">Connexion</a>
+          <Link to="/onboarding" className="text-[13px] bg-accent text-black font-semibold px-4 py-1.5 rounded-lg hover:brightness-110">Commencer</Link>
         </div>
       </nav>
 
-      {/* Hero */}
-      <section className="max-w-3xl mx-auto px-6 pt-20 md:pt-32 pb-20 text-center animate-[fade-in_0.6s_ease]">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-accent/15 bg-accent/5 text-accent/70 text-xs font-mono mb-8">
-          <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-          14 JOURS GRATUITS
+      {/* Hero — le produit EST le hero */}
+      <section className="relative z-10 max-w-2xl mx-auto px-6 pt-20 md:pt-32 pb-8 text-center">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/5 border border-accent/10 text-accent/60 text-[11px] font-medium mb-8">
+          <span className="w-1.5 h-1.5 rounded-full bg-accent/60" />Propulsé par l'IA
         </div>
-        <h1 className="text-4xl md:text-6xl font-black tracking-tight leading-[1.05] mb-5">
-          Votre site web + vos agents IA,
-          <br /><span className="text-accent">prêts en 5 minutes</span>
+        <h1 className="text-4xl md:text-[56px] font-black tracking-tight leading-[1.05] mb-4">
+          Décrivez votre business,<br /><span className="text-accent">Nova crée tout</span>
         </h1>
-        <p className="text-base md:text-lg text-white/30 max-w-lg mx-auto mb-10 leading-relaxed">
-          Décrivez votre business. Nova génère votre site, active vos agents,
-          et automatise ventes, support et opérations. 24/7.
+        <p className="text-[15px] text-white/25 max-w-md mx-auto mb-10 leading-relaxed">
+          Site web professionnel + agents IA qui gèrent vos ventes, support et opérations. Prêt en 5 minutes.
         </p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link to="/onboarding" className="px-8 py-4 bg-accent text-black font-bold rounded-xl text-sm shadow-[0_0_30px_rgba(79,159,255,0.15)] hover:shadow-[0_0_40px_rgba(79,159,255,0.25)] hover:brightness-110">Créer mon site IA gratuit →</Link>
-          <a href="#pricing" className="px-8 py-4 border border-white/[0.08] text-white/40 rounded-xl text-sm hover:border-white/[0.15] hover:text-white/60">Voir les tarifs</a>
-        </div>
+
+        {/* Main input — le coeur du produit */}
+        <form onSubmit={start} className="relative max-w-xl mx-auto mb-6">
+          <input
+            type="text" value={input} onChange={e => setInput(e.target.value)}
+            placeholder="Décrivez votre business... ex: dentiste à Genève"
+            className="w-full px-5 py-4 pr-36 rounded-2xl text-[15px] bg-white/[0.05] border border-white/[0.1] text-white placeholder:text-white/20 outline-none focus:border-accent/40 focus:bg-white/[0.07]"
+          />
+          <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 bg-accent text-black text-sm font-semibold px-5 py-2.5 rounded-xl hover:brightness-110">
+            Créer mon site →
+          </button>
+        </form>
+        <p className="text-[11px] text-white/15">Gratuit pendant 14 jours · Pas de carte requise</p>
       </section>
 
-      {/* Logos / trust */}
-      <section className="max-w-3xl mx-auto px-6 pb-16">
-        <div className="flex items-center justify-center gap-8 text-[11px] text-white/15 font-medium">
-          <span>RGPD natif</span><span className="w-1 h-1 rounded-full bg-white/10" /><span>Hébergé en Europe</span><span className="w-1 h-1 rounded-full bg-white/10" /><span>Support 24/7</span><span className="w-1 h-1 rounded-full bg-white/10" /><span>99.9% uptime</span>
+      {/* Generated examples preview */}
+      <section id="examples" className="relative z-10 max-w-4xl mx-auto px-6 py-16">
+        <p className="text-xs text-white/20 text-center mb-6 font-medium">Sites générés par Nova OS</p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <SiteMockup name="Dr Müller" color="#3b82f6" />
+          <SiteMockup name="Café du Lac" color="#22c55e" />
+          <SiteMockup name="Atelier Luxe" color="#d4a053" />
+          <SiteMockup name="FitStudio" color="#ef4444" />
+        </div>
+        <div className="flex items-center justify-center gap-6 mt-8 text-[11px] text-white/15">
+          <span>500+ sites créés</span><span className="w-1 h-1 rounded-full bg-white/10" /><span>12 secteurs</span><span className="w-1 h-1 rounded-full bg-white/10" /><span>Suisse & Europe</span>
         </div>
       </section>
 
       {/* How it works */}
-      <section id="how" className="max-w-4xl mx-auto px-6 py-16">
-        <h2 className="text-2xl md:text-3xl font-bold text-center mb-10">Comment ça marche</h2>
-        <div className="grid md:grid-cols-3 gap-5">
+      <section id="how" className="max-w-3xl mx-auto px-6 py-16">
+        <h2 className="text-2xl font-bold text-center mb-10">3 étapes, 5 minutes</h2>
+        <div className="grid md:grid-cols-3 gap-6">
           {[
-            { n: '1', title: 'Décrivez votre business', desc: 'Répondez à quelques questions sur votre activité, vos services et vos clients.' },
-            { n: '2', title: 'Nova crée tout', desc: 'Site web professionnel + agents IA personnalisés, générés en quelques secondes.' },
-            { n: '3', title: 'Tout tourne 24/7', desc: 'Ventes, support, emails — vos agents travaillent pendant que vous dormez.' },
+            { n: '1', title: 'Décrivez', desc: 'Votre activité, vos services, vos clients.' },
+            { n: '2', title: 'Choisissez', desc: 'Template, couleurs, agents IA.' },
+            { n: '3', title: 'Lancez', desc: 'Site en ligne + agents actifs 24/7.' },
           ].map((s, i) => (
-            <div key={s.n} className="card p-6 rounded-xl border border-white/[0.06] bg-dark-card text-center relative">
-              <div className="w-10 h-10 rounded-full bg-accent/10 text-accent text-sm font-bold flex items-center justify-center mx-auto mb-4">{s.n}</div>
-              <h3 className="text-sm font-semibold mb-2">{s.title}</h3>
-              <p className="text-xs text-white/25 leading-relaxed">{s.desc}</p>
-              {i < 2 && <span className="hidden md:block absolute top-1/2 -right-3 -translate-y-1/2 text-white/10">→</span>}
+            <div key={s.n} className="flex items-start gap-4 p-5 rounded-xl border border-white/[0.06] bg-dark-card">
+              <div className="w-8 h-8 rounded-lg bg-accent/10 text-accent text-xs font-bold flex items-center justify-center shrink-0">{s.n}</div>
+              <div>
+                <h3 className="text-sm font-semibold mb-1">{s.title}</h3>
+                <p className="text-xs text-white/25 leading-relaxed">{s.desc}</p>
+              </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Features */}
-      <section id="features" className="max-w-4xl mx-auto px-6 py-16">
-        <h2 className="text-2xl md:text-3xl font-bold text-center mb-3">Tout inclus</h2>
-        <p className="text-sm text-white/20 text-center mb-10">Chaque plan inclut votre site web + les agents IA que vous choisissez.</p>
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+      {/* Features — compact */}
+      <section className="max-w-3xl mx-auto px-6 py-16">
+        <h2 className="text-2xl font-bold text-center mb-3">Tout est inclus</h2>
+        <p className="text-sm text-white/20 text-center mb-10">Site web + agents IA + dashboard. Rien d'autre à installer.</p>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {[
-            { icon: '📈', title: 'Ventes automatiques', desc: 'Qualifie vos leads et envoie les relances.' },
-            { icon: '🤖', title: 'Support 24/7', desc: 'Répond à vos clients par email et chat.' },
-            { icon: '🔒', title: 'RGPD natif', desc: 'Données en Europe, consentement intégré.' },
-            { icon: '💬', title: 'Tous les canaux', desc: 'Email, WhatsApp, chat — un seul agent.' },
-            { icon: '📊', title: 'Dashboard', desc: 'Suivez leads, tickets et revenus.' },
-            { icon: '⚡', title: 'Prêt en 5 min', desc: 'Décrivez, générez, lancez.' },
+            { icon: '🌐', title: 'Site web pro', desc: '3 templates, édition inline' },
+            { icon: '🤖', title: 'Agents IA', desc: 'Support, ventes, emails, RDV' },
+            { icon: '✏️', title: 'Éditeur Wix-like', desc: 'Modifiez en cliquant' },
+            { icon: '📊', title: 'Dashboard', desc: 'Tout en un coup d\'œil' },
+            { icon: '🔒', title: 'RGPD natif', desc: 'Données en Europe' },
+            { icon: '⚡', title: '5 minutes', desc: 'De la description au live' },
           ].map(f => (
-            <div key={f.title} className="card flex items-start gap-3 p-5 rounded-xl border border-white/[0.06] bg-dark-card">
-              <span className="text-lg mt-0.5">{f.icon}</span>
-              <div>
-                <h3 className="text-sm font-semibold mb-1">{f.title}</h3>
-                <p className="text-xs text-white/25 leading-relaxed">{f.desc}</p>
-              </div>
+            <div key={f.title} className="p-4 rounded-xl border border-white/[0.06] bg-dark-card">
+              <span className="text-base mb-2 block">{f.icon}</span>
+              <h3 className="text-[13px] font-semibold mb-0.5">{f.title}</h3>
+              <p className="text-[11px] text-white/20">{f.desc}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* Pricing */}
-      <section id="pricing" className="max-w-4xl mx-auto px-6 py-16">
-        <h2 className="text-2xl md:text-3xl font-bold text-center mb-3">Tarifs simples</h2>
-        <p className="text-sm text-white/20 text-center mb-10">14 jours gratuits. Sans engagement. Annulation en 1 clic.</p>
-        <div className="grid md:grid-cols-3 gap-4">
+      <section id="pricing" className="max-w-3xl mx-auto px-6 py-16">
+        <h2 className="text-2xl font-bold text-center mb-3">Tarifs</h2>
+        <p className="text-sm text-white/20 text-center mb-10">14 jours gratuits. Sans engagement.</p>
+        <div className="grid md:grid-cols-3 gap-3">
           {[
-            { name: 'Starter', price: '59', features: ['Site web IA', '1 agent IA', 'Support email', 'Hébergement EU'] },
-            { name: 'Pro', price: '99', features: ['Site web IA', '3 agents IA', 'Support prioritaire', 'Dashboard avancé', 'Intégrations CRM'], featured: true },
-            { name: 'Unlimited', price: '199', features: ['Site web IA', 'Agents illimités', 'Support dédié', 'API access', 'Sur vos serveurs'] },
+            { name: 'Starter', price: '59', desc: 'Site + 1 agent', features: ['Site web IA', '1 agent IA', 'Support email'] },
+            { name: 'Pro', price: '99', desc: 'Site + 3 agents', features: ['Site web IA', '3 agents IA', 'Support prio', 'Dashboard avancé'], featured: true },
+            { name: 'Unlimited', price: '199', desc: 'Tout illimité', features: ['Site web IA', 'Agents illimités', 'Support dédié', 'API access'] },
           ].map(p => (
-            <div key={p.name} className={`card p-6 rounded-xl border flex flex-col ${p.featured ? 'border-accent/25 bg-accent/[0.03]' : 'border-white/[0.06] bg-dark-card'}`}>
-              <div className="flex items-center gap-2 mb-3">
+            <div key={p.name} className={`p-5 rounded-xl border flex flex-col ${p.featured ? 'border-accent/20 bg-accent/[0.03]' : 'border-white/[0.06] bg-dark-card'}`}>
+              <div className="flex items-center gap-2 mb-2">
                 <span className={`text-xs font-semibold ${p.featured ? 'text-accent' : 'text-white/40'}`}>{p.name}</span>
-                {p.featured && <span className="text-[8px] px-1.5 py-0.5 rounded-full bg-accent/10 text-accent/60">populaire</span>}
+                {p.featured && <span className="text-[8px] px-1.5 py-0.5 rounded-full bg-accent/10 text-accent/50">populaire</span>}
               </div>
-              <div className="flex items-baseline gap-1 mb-5">
-                <span className="text-3xl font-black">{p.price}</span>
-                <span className="text-xs text-white/20">€/mois</span>
-              </div>
-              <div className="flex flex-col gap-2 mb-6 flex-1">
-                {p.features.map(f => <span key={f} className="text-xs text-white/30">✓ {f}</span>)}
-              </div>
-              <Link to="/onboarding" className={`w-full py-3 rounded-xl text-sm font-semibold text-center block ${p.featured ? 'bg-accent text-black hover:brightness-110' : 'border border-white/[0.08] text-white/40 hover:text-white/60 hover:border-white/[0.15]'}`}>Commencer</Link>
+              <div className="flex items-baseline gap-1 mb-1"><span className="text-2xl font-black">{p.price}</span><span className="text-[10px] text-white/20">€/mois</span></div>
+              <p className="text-[10px] text-white/15 mb-4">{p.desc}</p>
+              <div className="flex flex-col gap-1.5 mb-5 flex-1">{p.features.map(f => <span key={f} className="text-[11px] text-white/25">✓ {f}</span>)}</div>
+              <Link to="/onboarding" className={`w-full py-2.5 rounded-lg text-xs font-semibold text-center block ${p.featured ? 'bg-accent text-black' : 'border border-white/[0.08] text-white/35'}`}>Commencer</Link>
             </div>
           ))}
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="max-w-2xl mx-auto px-6 py-20 text-center">
-        <div className="p-10 rounded-2xl border border-white/[0.06] bg-gradient-to-b from-accent/[0.03] to-transparent">
-          <h2 className="text-2xl md:text-3xl font-bold mb-3">Prêt à lancer ?</h2>
-          <p className="text-sm text-white/25 mb-8">5 minutes pour automatiser votre business.</p>
-          <Link to="/onboarding" className="inline-block px-8 py-4 bg-accent text-black font-bold rounded-xl text-sm shadow-[0_0_30px_rgba(79,159,255,0.15)] hover:shadow-[0_0_40px_rgba(79,159,255,0.25)] hover:brightness-110">Créer mon site IA gratuit →</Link>
-        </div>
+      {/* Final CTA */}
+      <section className="max-w-xl mx-auto px-6 py-20 text-center">
+        <h2 className="text-2xl font-bold mb-3">Créez votre site maintenant</h2>
+        <p className="text-sm text-white/20 mb-8">Décrivez votre business, Nova fait le reste.</p>
+        <Link to="/onboarding" className="inline-block px-8 py-3.5 bg-accent text-black font-bold rounded-xl text-sm shadow-[0_0_20px_rgba(79,159,255,0.15)] hover:brightness-110">Commencer gratuitement →</Link>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-white/[0.04] py-8 px-6">
-        <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <footer className="border-t border-white/[0.04] py-6 px-6">
+        <div className="max-w-3xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded bg-accent/10 flex items-center justify-center"><div className="w-2 h-2 rounded-sm bg-accent" /></div>
-            <span className="text-xs font-bold">Nova OS</span>
-            <span className="text-xs text-white/10 ml-2">Zurich, Suisse</span>
+            <div className="w-4 h-4 rounded bg-accent/10 flex items-center justify-center"><div className="w-1.5 h-1.5 rounded-sm bg-accent" /></div>
+            <span className="text-[11px] font-bold">Nova OS</span>
           </div>
-          <div className="flex gap-5 text-[11px] text-white/15">
-            <a href="#" className="hover:text-white/30">Mentions légales</a>
-            <a href="#" className="hover:text-white/30">CGU</a>
-            <a href="#" className="hover:text-white/30">Confidentialité</a>
-            <a href="#" className="hover:text-white/30">Contact</a>
+          <div className="flex gap-4 text-[10px] text-white/15">
+            <a href="#">Mentions légales</a><a href="#">CGU</a><a href="#">Confidentialité</a>
           </div>
         </div>
       </footer>
-
-      </div>
     </div>
   )
 }
