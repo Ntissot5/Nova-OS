@@ -1,42 +1,99 @@
 @import "tailwindcss";
 
 @theme {
-  --color-neon: #39FF14;
-  --color-neon-dim: #2bcc10;
-  --color-neon-glow: rgba(57, 255, 20, 0.15);
-  --color-dark: #050505;
-  --color-dark-card: #0a0a0a;
-  --color-dark-border: #1a1a1a;
-  --color-dark-surface: #111111;
+  --color-accent: #4f9fff;
+  --color-accent-light: #7cb8ff;
+  --color-violet: #7c3aed;
+  --color-violet-light: #a78bfa;
+  --color-dark: #0a0a1a;
+  --color-dark-card: #0d0d20;
+  --color-dark-border: rgba(79, 159, 255, 0.08);
+  --color-dark-surface: #10101f;
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 }
 
 body {
   margin: 0;
-  background: var(--color-dark);
+  background: linear-gradient(180deg, #0a0a1a 0%, #0d1117 50%, #0a0a1a 100%);
   color: #ffffff;
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-::selection {
-  background: var(--color-neon);
-  color: #000;
+::selection { background: var(--color-accent); color: #000; }
+
+/* Animations */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes pulse-glow {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 1; }
+@keyframes pulse-glow { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(79, 159, 255, 0.3), 0 0 40px rgba(79, 159, 255, 0.1); }
+  50% { box-shadow: 0 0 30px rgba(79, 159, 255, 0.5), 0 0 60px rgba(79, 159, 255, 0.2); }
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
+@keyframes blink-caret { 0%, 100% { border-color: var(--color-accent); } 50% { border-color: transparent; } }
+
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+
+/* Cards — simple hover, no pseudo-elements */
+.glow-card {
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.glow-card:hover {
+  border-color: rgba(79, 159, 255, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
-@keyframes grid-scroll {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(40px); }
+/* CTA button — no infinite animation */
+.btn-glow {
+  box-shadow: 0 0 20px rgba(79, 159, 255, 0.2);
 }
+.btn-glow:hover {
+  box-shadow: 0 0 30px rgba(79, 159, 255, 0.35);
+}
+
+/* Shimmer text */
+.shimmer-text {
+  background: linear-gradient(90deg, #ffffff 0%, #4f9fff 30%, #7c3aed 50%, #4f9fff 70%, #ffffff 100%);
+  background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; animation: shimmer 4s linear infinite;
+}
+
+/* Aurora */
+@keyframes aurora-drift-1 {
+  0% { transform: translate(0, 0) scale(1); } 20% { transform: translate(80px, -120px) scale(1.08); }
+  40% { transform: translate(-60px, -40px) scale(0.95); } 60% { transform: translate(100px, 60px) scale(1.12); }
+  80% { transform: translate(-40px, 100px) scale(1.02); } 100% { transform: translate(0, 0) scale(1); }
+}
+@keyframes aurora-drift-2 {
+  0% { transform: translate(0, 0) scale(1); } 25% { transform: translate(-100px, 80px) scale(1.1); }
+  50% { transform: translate(60px, 120px) scale(0.92); } 75% { transform: translate(80px, -60px) scale(1.06); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+@keyframes aurora-drift-3 {
+  0% { transform: translate(0, 0) scale(1); } 30% { transform: translate(70px, 100px) scale(1.15); }
+  60% { transform: translate(-90px, -50px) scale(0.9); } 100% { transform: translate(0, 0) scale(1); }
+}
+@keyframes aurora-pulse { 0%, 100% { opacity: 0.25; } 50% { opacity: 0.35; } }
+
+@keyframes rays-sway {
+  0% { transform: rotate(-8deg) scaleY(1); opacity: 0.12; } 33% { transform: rotate(4deg) scaleY(1.05); opacity: 0.18; }
+  66% { transform: rotate(-3deg) scaleY(0.95); opacity: 0.10; } 100% { transform: rotate(-8deg) scaleY(1); opacity: 0.12; }
+}
+
+.aurora-container { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.aurora-blob { position: absolute; border-radius: 50%; filter: blur(150px); will-change: transform; mix-blend-mode: screen; }
+.aurora-blob-1 { width: 800px; height: 700px; top: -10%; left: -5%; background: radial-gradient(circle, rgba(79,159,255,0.35) 0%, rgba(79,159,255,0.10) 40%, transparent 70%); animation: aurora-drift-1 22s ease-in-out infinite, aurora-pulse 8s ease-in-out infinite; }
+.aurora-blob-2 { width: 750px; height: 750px; top: 20%; right: -8%; background: radial-gradient(circle, rgba(124,58,237,0.30) 0%, rgba(124,58,237,0.08) 40%, transparent 70%); animation: aurora-drift-2 28s ease-in-out infinite, aurora-pulse 10s ease-in-out 2s infinite; }
+.aurora-blob-3 { width: 700px; height: 650px; bottom: -5%; left: 5%; background: radial-gradient(circle, rgba(0,212,255,0.28) 0%, rgba(0,212,255,0.08) 40%, transparent 70%); animation: aurora-drift-3 25s ease-in-out infinite, aurora-pulse 9s ease-in-out 4s infinite; }
+.aurora-blob-4 { width: 500px; height: 500px; top: 30%; left: 25%; background: radial-gradient(circle, rgba(100,100,255,0.15) 0%, transparent 65%); filter: blur(180px); animation: aurora-drift-2 35s ease-in-out infinite reverse; }
+.aurora-blob-5 { width: 450px; height: 450px; bottom: 15%; right: 20%; background: radial-gradient(circle, rgba(60,130,246,0.12) 0%, transparent 65%); filter: blur(180px); animation: aurora-drift-1 30s ease-in-out infinite reverse; }
+.aurora-rays { position: absolute; top: -20%; left: 5%; width: 600px; height: 120vh; background: linear-gradient(180deg, rgba(79,159,255,0.12) 0%, rgba(79,159,255,0.04) 30%, transparent 60%); clip-path: polygon(35% 0%, 65% 0%, 80% 100%, 20% 100%); filter: blur(40px); transform-origin: top center; animation: rays-sway 15s ease-in-out infinite; }
+.aurora-rays-2 { position: absolute; top: -15%; left: 15%; width: 400px; height: 100vh; background: linear-gradient(180deg, rgba(124,58,237,0.08) 0%, rgba(124,58,237,0.02) 35%, transparent 55%); clip-path: polygon(30% 0%, 70% 0%, 85% 100%, 15% 100%); filter: blur(50px); transform-origin: top center; animation: rays-sway 20s ease-in-out 5s infinite; }
+.aurora-rays-3 { position: absolute; top: -10%; right: 10%; width: 350px; height: 90vh; background: linear-gradient(180deg, rgba(0,212,255,0.06) 0%, transparent 40%); clip-path: polygon(25% 0%, 75% 0%, 90% 100%, 10% 100%); filter: blur(60px); transform-origin: top center; animation: rays-sway 18s ease-in-out 8s infinite reverse; }
