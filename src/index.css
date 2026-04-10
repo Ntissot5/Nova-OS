@@ -1,50 +1,61 @@
 @import "tailwindcss";
 
 @theme {
-  --color-accent: #4f9fff;
-  --color-accent-light: #7cb8ff;
-  --color-violet: #7c3aed;
-  --color-dark: #0a0a1a;
-  --color-dark-card: #0f0f1e;
+  --color-accent: #6c5ce7;
+  --color-accent-light: #a29bfe;
+  --color-blue: #74b9ff;
+  --color-dark: #0c0c1c;
+  --color-dark-card: rgba(255, 255, 255, 0.03);
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 }
 
 body {
   margin: 0;
-  background: #0a0a1a;
+  background: #0c0c1c;
   color: #fff;
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
 
-::selection { background: var(--color-accent); color: #000; }
+::selection { background: var(--color-accent); color: #fff; }
+
+/* Gradient text */
+.text-gradient {
+  background: linear-gradient(135deg, #ffffff 0%, #a29bfe 50%, #74b9ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-accent {
+  background: linear-gradient(135deg, #6c5ce7 0%, #74b9ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Gradient button */
+.btn-gradient {
+  background: linear-gradient(135deg, #6c5ce7 0%, #74b9ff 100%);
+  color: #fff;
+}
+.btn-gradient:hover {
+  filter: brightness(1.1);
+}
+
+/* Glass card */
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+}
+.glass:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+}
 
 @keyframes fade-in {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
-}
-
-/* Subtle background glow — pure CSS, no animation */
-.bg-glow {
-  background:
-    radial-gradient(ellipse 60% 50% at 20% 0%, rgba(79, 159, 255, 0.06) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 40% at 80% 60%, rgba(124, 58, 237, 0.04) 0%, transparent 70%),
-    #0a0a1a;
-}
-
-/* Grid overlay */
-.bg-grid {
-  background-image:
-    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-  background-size: 60px 60px;
-}
-
-/* Card hover — lightweight */
-.card {
-  transition: border-color 0.15s;
-}
-.card:hover {
-  border-color: rgba(255,255,255,0.12);
 }
