@@ -56,36 +56,105 @@ export default function App() {
         </div>
       </section>
 
-      {/* ━━━ PRODUCT PREVIEW ━━━ */}
-      <section className="relative z-10 max-w-4xl mx-auto px-6 pb-20">
-        <div className="rounded-2xl overflow-hidden shadow-[0_4px_40px_rgba(0,0,0,0.08)] border border-black/[0.06]">
-          <div className="flex items-center gap-2 px-4 py-3 bg-[#f8f8f8] border-b border-black/[0.04]">
-            <div className="flex gap-1.5"><div className="w-3 h-3 rounded-full bg-black/[0.06]" /><div className="w-3 h-3 rounded-full bg-black/[0.06]" /><div className="w-3 h-3 rounded-full bg-black/[0.06]" /></div>
-            <div className="flex-1 mx-8"><div className="bg-black/[0.03] rounded-lg px-4 py-1.5 text-[11px] text-black/20 text-center font-mono">votre-business.novaos.io</div></div>
+      {/* ━━━ PRODUCT PREVIEW — Full realistic site ━━━ */}
+      <section className="relative z-10 max-w-5xl mx-auto px-6 pb-20">
+        <div className="rounded-2xl overflow-hidden shadow-[0_8px_60px_rgba(0,0,0,0.10)] border border-black/[0.06]">
+          {/* Browser chrome */}
+          <div className="flex items-center gap-2 px-4 py-2.5 bg-[#f5f5f5] border-b border-black/[0.06]">
+            <div className="flex gap-1.5"><div className="w-3 h-3 rounded-full bg-[#ff5f57]" /><div className="w-3 h-3 rounded-full bg-[#febc2e]" /><div className="w-3 h-3 rounded-full bg-[#28c840]" /></div>
+            <div className="flex-1 mx-12"><div className="bg-white rounded-lg px-4 py-1.5 text-[11px] text-black/30 text-center font-mono border border-black/[0.04]">🔒 cabinet-leman.novaos.io</div></div>
           </div>
-          <div className="bg-white">
+          {/* Site content */}
+          <div className="bg-white text-[#1a1a1a]" style={{ fontSize: '14px' }}>
+            {/* Nav */}
             <div className="flex items-center justify-between px-8 py-4 border-b border-black/[0.04]">
-              <span className="text-sm font-bold text-dark">Votre Business</span>
-              <div className="flex gap-6 text-[11px] text-black/30"><span>Services</span><span>À propos</span><span>Contact</span></div>
-              <div className="px-4 py-1.5 rounded-full text-[10px] font-semibold text-white bg-accent">Réserver</div>
+              <span className="text-base font-black" style={{ color: '#1e3a5f' }}>Cabinet Dentaire Léman</span>
+              <div className="hidden md:flex gap-6 text-[11px] text-black/35 font-medium"><span>Services</span><span>Équipe</span><span>Avis</span><span>Contact</span></div>
+              <div className="px-5 py-2 rounded-full text-[11px] font-semibold text-white" style={{ background: '#1e3a5f' }}>Prendre RDV</div>
             </div>
-            <div className="relative h-52">
-              <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=900&q=80" alt="" className="w-full h-full object-cover" />
-              <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                <div className="text-center"><div className="text-white text-2xl font-bold mb-2">Votre titre accrocheur</div><div className="text-white/70 text-sm mb-4">Généré automatiquement par l'IA</div><div className="inline-block px-6 py-2.5 rounded-full text-xs font-semibold text-white bg-accent">Prendre rendez-vous</div></div>
+
+            {/* Hero with image */}
+            <div className="relative h-64">
+              <img src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1200&q=80" alt="" className="w-full h-full object-cover" />
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(30,58,95,0.85), rgba(30,58,95,0.5))' }}>
+                <div className="h-full flex items-center px-10">
+                  <div>
+                    <p className="text-white/50 text-[10px] uppercase tracking-widest mb-2">Depuis 2008 à Genève</p>
+                    <h2 className="text-white text-2xl md:text-3xl font-black mb-3 leading-tight">Votre sourire mérite<br />les meilleurs soins</h2>
+                    <p className="text-white/60 text-xs mb-5 max-w-sm">Cabinet dentaire moderne au cœur de Genève. Orthodontie, implants et soins esthétiques.</p>
+                    <div className="flex gap-3">
+                      <div className="px-5 py-2.5 rounded-full text-[11px] font-semibold text-white" style={{ background: '#3b82f6' }}>Prendre rendez-vous</div>
+                      <div className="px-5 py-2.5 rounded-full text-[11px] font-semibold text-white/70 border border-white/20">Découvrir →</div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="px-8 py-6 grid grid-cols-3 gap-4">
-              {['Service 1', 'Service 2', 'Service 3'].map((s, i) => (
-                <div key={i} className="p-4 rounded-xl border border-black/[0.04]">
-                  <div className="w-8 h-8 rounded-lg mb-3 flex items-center justify-center text-white text-xs font-bold bg-accent">{i + 1}</div>
-                  <div className="text-xs font-semibold mb-1">{s}</div>
-                  <div className="text-[10px] text-black/30">Description générée</div>
+
+            {/* Stats */}
+            <div className="grid grid-cols-4 border-b border-black/[0.04]">
+              {[{ n: '15+', l: 'Années' }, { n: '3 200', l: 'Patients' }, { n: '4.9/5', l: 'Google' }, { n: '24h', l: 'Réponse' }].map(s => (
+                <div key={s.n} className="text-center py-5 border-r last:border-r-0 border-black/[0.04]">
+                  <div className="text-lg font-black" style={{ color: '#1e3a5f' }}>{s.n}</div>
+                  <div className="text-[9px] text-black/30">{s.l}</div>
                 </div>
               ))}
             </div>
+
+            {/* Services */}
+            <div className="px-8 py-8">
+              <p className="text-[10px] uppercase tracking-widest mb-2" style={{ color: '#3b82f6' }}>Nos services</p>
+              <h3 className="text-lg font-black mb-6" style={{ color: '#1e3a5f' }}>Des soins d'excellence</h3>
+              <div className="grid grid-cols-3 gap-4">
+                {[
+                  { icon: '🦷', name: 'Orthodontie', desc: 'Alignement dentaire invisible et bagues classiques.', price: 'Dès 2 500 CHF' },
+                  { icon: '✨', name: 'Esthétique dentaire', desc: 'Blanchiment, facettes et sourire sur-mesure.', price: 'Dès 800 CHF' },
+                  { icon: '🔧', name: 'Implants', desc: 'Remplacement durable des dents manquantes.', price: 'Dès 3 000 CHF' },
+                ].map((s, i) => (
+                  <div key={i} className="p-5 rounded-xl border border-black/[0.04] hover:shadow-md">
+                    <span className="text-xl block mb-3">{s.icon}</span>
+                    <div className="text-xs font-bold mb-1.5" style={{ color: '#1e3a5f' }}>{s.name}</div>
+                    <div className="text-[10px] text-black/35 leading-relaxed mb-3">{s.desc}</div>
+                    <div className="text-[10px] font-bold" style={{ color: '#3b82f6' }}>{s.price}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Testimonials */}
+            <div className="px-8 py-8 bg-[#f8f9fb]">
+              <p className="text-[10px] uppercase tracking-widest mb-2" style={{ color: '#3b82f6' }}>Avis patients</p>
+              <h3 className="text-lg font-black mb-6" style={{ color: '#1e3a5f' }}>Ils nous font confiance</h3>
+              <div className="grid grid-cols-3 gap-4">
+                {[
+                  { text: 'Excellent cabinet, équipe très professionnelle et rassurante.', name: 'Marie L.', stars: 5 },
+                  { text: 'Mon traitement d\'orthodontie s\'est parfaitement déroulé.', name: 'Pierre K.', stars: 5 },
+                  { text: 'Je recommande vivement. Soins de qualité supérieure.', name: 'Sophie R.', stars: 5 },
+                ].map((t, i) => (
+                  <div key={i} className="p-4 rounded-xl bg-white border border-black/[0.04]">
+                    <div className="flex gap-0.5 mb-2">{[...Array(t.stars)].map((_, j) => <span key={j} className="text-[10px]" style={{ color: '#f59e0b' }}>★</span>)}</div>
+                    <p className="text-[10px] text-black/40 leading-relaxed mb-3">"{t.text}"</p>
+                    <div className="text-[10px] font-bold" style={{ color: '#1e3a5f' }}>{t.name}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Contact */}
+            <div className="px-8 py-6 flex items-center justify-between border-t border-black/[0.04]">
+              <div className="flex gap-8">
+                <div><div className="text-[8px] text-black/25 uppercase tracking-widest mb-1">Email</div><div className="text-[11px] font-medium">contact@cabinet-leman.ch</div></div>
+                <div><div className="text-[8px] text-black/25 uppercase tracking-widest mb-1">Téléphone</div><div className="text-[11px] font-medium">+41 22 700 40 50</div></div>
+                <div><div className="text-[8px] text-black/25 uppercase tracking-widest mb-1">Adresse</div><div className="text-[11px] font-medium">Rue du Lac 15, 1201 Genève</div></div>
+              </div>
+              <div className="text-[8px] text-black/15">Propulsé par Nova OS</div>
+            </div>
+
+            {/* Fake chat widget */}
+            <div className="absolute bottom-4 right-4 w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg" style={{ background: '#1e3a5f' }}>💬</div>
           </div>
         </div>
+        <p className="text-center text-[11px] text-black/20 mt-4">↑ Exemple de site généré par Nova OS en 5 minutes</p>
       </section>
 
       {/* ━━━ LOGOS ━━━ */}
