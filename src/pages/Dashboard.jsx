@@ -88,25 +88,13 @@ export default function Dashboard() {
             <div>
               <h2 className="text-lg font-bold mb-4">Mon site</h2>
               <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06]">
-                {business?.site_url ? (
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-sm font-semibold mb-1">{business.name}</div>
-                      <a href={business.site_url} target="_blank" rel="noreferrer" className="text-xs text-accent hover:underline">{business.site_url}</a>
-                    </div>
-                    <a href={business.site_url} target="_blank" rel="noreferrer" className="px-4 py-2 rounded-lg text-xs bg-accent/10 text-accent border border-accent/20 hover:bg-accent/20 transition-all">Voir mon site</a>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-sm font-semibold mb-1">{business?.site_config?.name || business?.name || 'Mon site'}</div>
+                    <div className="text-xs text-white/25">{business?.site_config?.html ? 'Site généré et en ligne' : 'Cliquez pour générer votre site'}</div>
                   </div>
-                ) : business?.site_config?.name ? (
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-sm font-semibold mb-1">{business.site_config.name}</div>
-                      <div className="text-xs text-white/25">{business.site_config.slogan}</div>
-                    </div>
-                    <a href="/my-site" className="px-4 py-2 rounded-lg text-xs bg-accent/10 text-accent border border-accent/20 hover:bg-accent/20">Voir mon site →</a>
-                  </div>
-                ) : (
-                  <p className="text-sm text-white/25">Aucun site généré.</p>
-                )}
+                  <a href="/my-site" className="px-4 py-2 rounded-lg text-xs bg-accent/10 text-accent border border-accent/20 hover:bg-accent/20">{business?.site_config?.html ? 'Voir mon site →' : 'Générer mon site →'}</a>
+                </div>
               </div>
             </div>
 
