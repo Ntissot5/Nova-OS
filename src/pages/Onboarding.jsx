@@ -103,9 +103,12 @@ export default function Onboarding() {
         age_range: ageRange, tone, automations, plan,
       })
 
-      setSetupStatus('Nova génère votre site web...')
+      setSetupStatus('Nova génère votre site web complet...')
       const chosenPalette = PALETTES.find(p => p.id === palette)
       let siteConfig = {}
+      let siteHtml = ''
+
+      // Generate JSON config (for dashboard display)
       try {
         const res = await fetch('/api/generate-site', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -117,11 +120,25 @@ export default function Onboarding() {
       siteConfig.template = template
       siteConfig.colors = { primary: chosenPalette.primary, accent: chosenPalette.accent, secondary: chosenPalette.secondary }
 
+      // Generate full HTML site
+      setSetupStatus('Design de votre site en cours...')
+      try {
+        const res = await fetch('/api/generate-html-site', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            description: `${companyName}, ${sector} à ${city}. ${description}. Services: ${services.filter(Boolean).join(', ')}. Clients: ${clientType}. Ton: ${tone}.`,
+            template, colors: { primary: chosenPalette.primary, accent: chosenPalette.accent, secondary: chosenPalette.secondary }, tone,
+          }),
+        })
+        const data = await res.json()
+        if (data.success && data.data?.html) siteHtml = data.data.html
+      } catch {}
+
       setSetupStatus('Configuration de votre espace...')
       const { data: biz, error: bizErr } = await supabase.from('businesses').insert({
         owner_id: userId, owner_email: email, name: companyName,
         description: `${sector} à ${city}. ${description}`,
-        site_config: siteConfig, plan, agents: automations,
+        site_config: { ...siteConfig, html: siteHtml }, plan, agents: automations,
       }).select().single()
       if (bizErr) throw bizErr
 
