@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 export default function App() {
   const [input, setInput] = useState('')
   const navigate = useNavigate()
-  const start = (e) => { e.preventDefault(); if (input.trim()) localStorage.setItem('novaos-desc', input); navigate('/onboarding') }
+  const start = (e) => { e.preventDefault(); if (input.trim()) localStorage.setItem('novaos-desc', input); navigate('/dashboard') }
 
   return (
     <div className="min-h-screen text-dark" style={{ background: '#fff' }}>
@@ -25,7 +25,7 @@ export default function App() {
         </div>
         <div className="flex items-center gap-3">
           <a href="/login" className="text-[13px] text-black/40 px-3 py-2 hidden md:block hover:text-black/70">Connexion</a>
-          <Link to="/onboarding" className="text-[13px] font-semibold px-5 py-2.5 rounded-full bg-dark text-white">Commencer →</Link>
+          <Link to="/dashboard" className="text-[13px] font-semibold px-5 py-2.5 rounded-full bg-dark text-white">Commencer →</Link>
         </div>
       </nav>
 
@@ -273,7 +273,7 @@ export default function App() {
               <div className="flex items-baseline gap-1 mb-1"><span className="text-4xl font-black">{p.price}</span><span className={`text-xs ${p.featured ? 'text-white/30' : 'text-black/20'}`}>CHF/mois</span></div>
               <p className={`text-[11px] mb-6 ${p.featured ? 'text-white/30' : 'text-black/25'}`}>{p.desc}</p>
               <div className="flex flex-col gap-2.5 mb-8 flex-1">{p.features.map(f => <span key={f} className={`text-[12px] flex items-center gap-2 ${p.featured ? 'text-white/50' : 'text-black/35'}`}><span className={p.featured ? 'text-accent' : 'text-black/15'}>✓</span>{f}</span>)}</div>
-              <Link to="/onboarding" className={`w-full py-3 rounded-xl text-[13px] font-semibold text-center block ${p.featured ? 'bg-accent text-white' : 'bg-white border border-black/[0.08] text-black/50 hover:text-black/70'}`}>Essayer 14 jours</Link>
+              <Link to="/dashboard" className={`w-full py-3 rounded-xl text-[13px] font-semibold text-center block ${p.featured ? 'bg-accent text-white' : 'bg-white border border-black/[0.08] text-black/50 hover:text-black/70'}`}>Essayer 14 jours</Link>
             </div>
           ))}
         </div>
@@ -285,7 +285,7 @@ export default function App() {
         <div className="rounded-3xl p-12 md:p-16" style={{ background: 'linear-gradient(135deg, #fde8d8, #fef3c7)' }}>
           <h2 className="text-3xl md:text-4xl font-black tracking-tight mb-4 text-dark">Votre business mérite mieux qu'une agence à 10 000 CHF</h2>
           <p className="text-sm text-black/40 mb-8">5 minutes. 99 CHF/mois. Tout inclus.</p>
-          <Link to="/onboarding" className="inline-block text-[13px] font-semibold px-8 py-4 rounded-full bg-dark text-white">Commencer gratuitement →</Link>
+          <Link to="/dashboard" className="inline-block text-[13px] font-semibold px-8 py-4 rounded-full bg-dark text-white">Commencer gratuitement →</Link>
         </div>
       </section>
 
