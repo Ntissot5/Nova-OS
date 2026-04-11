@@ -2,39 +2,38 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 const DEMO_STEPS = [
-  { cmd: 'Passe en mode sombre', bg: '#0a0a0a', text: '#fff', accent: '#6c5ce7', cardBg: 'rgba(255,255,255,0.04)', border: 'rgba(255,255,255,0.06)', sub: 'rgba(255,255,255,0.3)', heroBg: 'rgba(108,92,231,0.3)' },
-  { cmd: 'Change la couleur en vert nature', bg: '#ffffff', text: '#1a3a2a', accent: '#22c55e', cardBg: '#f0fdf4', border: 'rgba(0,0,0,0.05)', sub: 'rgba(0,0,0,0.3)', heroBg: 'rgba(34,197,94,0.2)' },
-  { cmd: 'Rends le design luxueux et doré', bg: '#faf9f6', text: '#1a1a1a', accent: '#b8860b', cardBg: '#fffbf0', border: 'rgba(0,0,0,0.06)', sub: 'rgba(0,0,0,0.35)', heroBg: 'rgba(184,134,11,0.2)' },
-  { cmd: 'Style moderne bleu électrique', bg: '#ffffff', text: '#0a0a0a', accent: '#3b82f6', cardBg: '#f0f7ff', border: 'rgba(0,0,0,0.05)', sub: 'rgba(0,0,0,0.3)', heroBg: 'rgba(59,130,246,0.2)' },
+  { cmd: 'Passe en mode sombre', steps: ['Analyse du design actuel', 'Changement des couleurs', 'Ajustement des contrastes', 'Application du thème sombre'], bg: '#0a0a0a', text: '#fff', accent: '#6c5ce7', cardBg: 'rgba(255,255,255,0.04)', border: 'rgba(255,255,255,0.06)', sub: 'rgba(255,255,255,0.3)', heroBg: 'rgba(108,92,231,0.3)' },
+  { cmd: 'Change la couleur en vert nature', steps: ['Identification de la palette', 'Sélection des teintes vertes', 'Mise à jour des éléments', 'Harmonisation du design'], bg: '#ffffff', text: '#1a3a2a', accent: '#22c55e', cardBg: '#f0fdf4', border: 'rgba(0,0,0,0.05)', sub: 'rgba(0,0,0,0.3)', heroBg: 'rgba(34,197,94,0.2)' },
+  { cmd: 'Rends le design luxueux et doré', steps: ['Analyse du style actuel', 'Application des tons dorés', 'Changement de typographie', 'Ajout de finitions premium'], bg: '#faf9f6', text: '#1a1a1a', accent: '#b8860b', cardBg: '#fffbf0', border: 'rgba(0,0,0,0.06)', sub: 'rgba(0,0,0,0.35)', heroBg: 'rgba(184,134,11,0.2)' },
+  { cmd: 'Style moderne bleu électrique', steps: ['Reconfiguration du layout', 'Application du bleu accent', 'Optimisation des espacements', 'Finalisation du design'], bg: '#ffffff', text: '#0a0a0a', accent: '#3b82f6', cardBg: '#f0f7ff', border: 'rgba(0,0,0,0.05)', sub: 'rgba(0,0,0,0.3)', heroBg: 'rgba(59,130,246,0.2)' },
 ]
 
 function EditorDemo() {
-  const [phase, setPhase] = useState(0) // 0-3: which style
+  const [phase, setPhase] = useState(0)
   const [typing, setTyping] = useState('')
   const [applied, setApplied] = useState(false)
+  const [visibleSteps, setVisibleSteps] = useState(0)
+  const [sent, setSent] = useState(false)
   const step = DEMO_STEPS[phase]
   const prevStyle = DEMO_STEPS[(phase + DEMO_STEPS.length - 1) % DEMO_STEPS.length]
   const current = applied ? step : prevStyle
 
   useEffect(() => {
     let cancelled = false
+    const wait = (ms) => new Promise(r => setTimeout(r, ms))
     const run = async () => {
-      // Type the command
-      setApplied(false)
-      setTyping('')
-      await new Promise(r => setTimeout(r, 800))
-      for (let i = 0; i <= step.cmd.length; i++) {
-        if (cancelled) return
-        setTyping(step.cmd.slice(0, i))
-        await new Promise(r => setTimeout(r, 40))
-      }
-      // Wait then apply
-      await new Promise(r => setTimeout(r, 600))
-      if (cancelled) return
+      setApplied(false); setTyping(''); setSent(false); setVisibleSteps(0)
+      await wait(800)
+      // Type command
+      for (let i = 0; i <= step.cmd.length; i++) { if (cancelled) return; setTyping(step.cmd.slice(0, i)); await wait(35) }
+      await wait(400)
+      if (cancelled) return; setSent(true)
+      // Show processing steps one by one
+      for (let i = 1; i <= step.steps.length; i++) { await wait(500); if (cancelled) return; setVisibleSteps(i) }
+      await wait(300); if (cancelled) return
+      // Apply the change
       setApplied(true)
-      // Wait then next
-      await new Promise(r => setTimeout(r, 3000))
-      if (cancelled) return
+      await wait(3500); if (cancelled) return
       setPhase(p => (p + 1) % DEMO_STEPS.length)
     }
     run()
@@ -42,64 +41,118 @@ function EditorDemo() {
   }, [phase])
 
   return (
-    <section className="relative z-10 max-w-4xl mx-auto px-6 py-20">
+    <section className="relative z-10 max-w-5xl mx-auto px-6 py-20">
       <div className="text-center mb-10">
         <p className="text-[12px] font-semibold uppercase tracking-widest text-accent mb-3">Éditeur IA</p>
         <h2 className="text-3xl md:text-4xl font-black tracking-tight mb-4">Modifiez tout. En temps réel.</h2>
-        <p className="text-sm text-black/35 max-w-md mx-auto">Tapez ce que vous voulez. Regardez votre site changer instantanément.</p>
+        <p className="text-sm text-black/35 max-w-md mx-auto">Décrivez le changement souhaité. Nova modifie votre site instantanément.</p>
       </div>
 
-      <div className="rounded-2xl overflow-hidden shadow-[0_8px_60px_rgba(0,0,0,0.10)] border border-black/[0.06]">
-        {/* Chrome */}
-        <div className="flex items-center gap-2 px-4 py-2.5 bg-[#1a1a1a]">
-          <div className="flex gap-1.5"><div className="w-3 h-3 rounded-full bg-white/10" /><div className="w-3 h-3 rounded-full bg-white/10" /><div className="w-3 h-3 rounded-full bg-white/10" /></div>
-          <div className="flex-1 mx-8"><div className="bg-white/[0.06] rounded-lg px-4 py-1.5 text-[11px] text-white/25 text-center font-mono">mon-business.novaos.io</div></div>
+      <div className="rounded-2xl overflow-hidden shadow-[0_8px_60px_rgba(0,0,0,0.08)] border border-black/[0.06]">
+        {/* Top toolbar */}
+        <div className="flex items-center justify-between px-4 py-2.5 bg-[#fafafa] border-b border-black/[0.06]">
+          <div className="flex items-center gap-3">
+            <div className="flex gap-1.5"><div className="w-3 h-3 rounded-full bg-[#ff5f57]" /><div className="w-3 h-3 rounded-full bg-[#febc2e]" /><div className="w-3 h-3 rounded-full bg-[#28c840]" /></div>
+            <span className="text-[10px] text-black/20 font-mono">Page: Accueil</span>
+          </div>
+          <div className="flex items-center gap-4 text-[10px] text-black/25">
+            <span>✨ Ask AI</span><span>Change Layout</span><span>Change Background</span>
+          </div>
         </div>
 
-        {/* Site that changes */}
-        <div className="relative" style={{ background: current.bg, color: current.text, transition: 'all 0.6s ease' }}>
-          <div className="px-6 md:px-8 py-5">
-            {/* Nav */}
-            <div className="flex items-center justify-between mb-5 pb-3" style={{ borderBottom: `1px solid ${current.border}`, transition: 'all 0.6s ease' }}>
-              <span className="text-sm font-black" style={{ color: current.text, transition: 'color 0.6s' }}>Mon Business</span>
-              <div className="flex gap-4 text-[10px]" style={{ color: current.sub, transition: 'color 0.6s' }}><span>Services</span><span>Avis</span><span>Contact</span></div>
-              <div className="px-3.5 py-1.5 rounded-full text-[9px] font-bold text-white" style={{ background: current.accent, transition: 'background 0.6s' }}>Réserver</div>
-            </div>
-            {/* Hero */}
-            <div className="relative h-32 md:h-36 rounded-xl overflow-hidden mb-5">
-              <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=70" alt="" className="w-full h-full object-cover" />
-              <div className="absolute inset-0 flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${current.bg}dd, ${current.heroBg})`, transition: 'all 0.6s ease' }}>
-                <div className="text-center">
-                  <div className="text-lg md:text-xl font-black mb-1" style={{ color: current.text, transition: 'color 0.6s' }}>Votre titre accrocheur</div>
-                  <div className="text-[11px] mb-3" style={{ color: current.sub, transition: 'color 0.6s' }}>Sous-titre généré par l'IA</div>
-                  <div className="inline-block px-4 py-1.5 rounded-full text-[10px] font-bold text-white" style={{ background: current.accent, transition: 'background 0.6s' }}>Commencer</div>
+        <div className="flex" style={{ minHeight: '420px' }}>
+          {/* LEFT — Site preview */}
+          <div className="flex-1 relative overflow-hidden" style={{ background: current.bg, transition: 'background 0.6s ease' }}>
+            <div className="p-5">
+              {/* Nav */}
+              <div className="flex items-center justify-between mb-4 pb-2.5" style={{ borderBottom: `1px solid ${current.border}`, transition: 'all 0.6s' }}>
+                <span className="text-xs font-black" style={{ color: current.text, transition: 'color 0.6s' }}>Mon Business</span>
+                <div className="flex gap-3 text-[9px]" style={{ color: current.sub, transition: 'color 0.6s' }}><span>Services</span><span>Avis</span><span>Contact</span></div>
+                <div className="px-3 py-1 rounded-full text-[8px] font-bold text-white" style={{ background: current.accent, transition: 'background 0.6s' }}>Réserver</div>
+              </div>
+              {/* Hero */}
+              <div className="relative h-40 rounded-xl overflow-hidden mb-4">
+                <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=70" alt="" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${current.bg}dd, ${current.heroBg})`, transition: 'all 0.6s' }}>
+                  <div className="text-center">
+                    <div className="text-base md:text-lg font-black mb-1" style={{ color: current.text, transition: 'color 0.6s' }}>Votre titre accrocheur</div>
+                    <div className="text-[10px] mb-3" style={{ color: current.sub, transition: 'color 0.6s' }}>Sous-titre généré par Nova</div>
+                    <div className="inline-block px-4 py-1.5 rounded-full text-[9px] font-bold text-white" style={{ background: current.accent, transition: 'background 0.6s' }}>Découvrir</div>
+                  </div>
                 </div>
               </div>
-            </div>
-            {/* Cards */}
-            <div className="grid grid-cols-3 gap-3 mb-3">
-              {['Consulting', 'Formation', 'Coaching'].map((s, i) => (
-                <div key={i} className="p-3 md:p-4 rounded-xl" style={{ background: current.cardBg, border: `1px solid ${current.border}`, transition: 'all 0.6s ease' }}>
-                  <div className="w-5 h-5 rounded-md mb-2" style={{ background: current.accent, opacity: 0.25, transition: 'background 0.6s' }} />
-                  <div className="text-[10px] font-bold mb-0.5" style={{ color: current.text, transition: 'color 0.6s' }}>{s}</div>
-                  <div className="text-[8px]" style={{ color: current.sub, transition: 'color 0.6s' }}>Description</div>
-                </div>
-              ))}
+              {/* Stats */}
+              <div className="flex justify-around mb-4 py-2.5 rounded-xl" style={{ background: current.cardBg, border: `1px solid ${current.border}`, transition: 'all 0.6s' }}>
+                {[{ n: '15+', l: 'Ans' }, { n: '500+', l: 'Clients' }, { n: '4.9', l: 'Google' }].map(s => (
+                  <div key={s.n} className="text-center"><div className="text-sm font-black" style={{ color: current.accent, transition: 'color 0.6s' }}>{s.n}</div><div className="text-[7px]" style={{ color: current.sub, transition: 'color 0.6s' }}>{s.l}</div></div>
+                ))}
+              </div>
+              {/* Cards */}
+              <div className="grid grid-cols-3 gap-2">
+                {['Consulting', 'Formation', 'Coaching'].map((s, i) => (
+                  <div key={i} className="p-3 rounded-xl" style={{ background: current.cardBg, border: `1px solid ${current.border}`, transition: 'all 0.6s' }}>
+                    <div className="w-5 h-5 rounded-md mb-2" style={{ background: current.accent, opacity: 0.2, transition: 'background 0.6s' }} />
+                    <div className="text-[9px] font-bold mb-0.5" style={{ color: current.text, transition: 'color 0.6s' }}>{s}</div>
+                    <div className="text-[7px]" style={{ color: current.sub, transition: 'color 0.6s' }}>Description courte</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* Floating command bar */}
-          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 w-[88%] max-w-[450px]">
-            <div className="rounded-2xl p-1" style={{ background: 'rgba(10,10,15,0.88)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.12)', boxShadow: '0 8px 40px rgba(0,0,0,0.4)' }}>
+          {/* RIGHT — AI Chat panel */}
+          <div className="w-[240px] md:w-[280px] border-l border-black/[0.06] bg-white flex flex-col shrink-0">
+            {/* Panel header */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-black/[0.06]">
               <div className="flex items-center gap-2">
-                <div className="pl-3 text-white/30 text-sm">✨</div>
-                <div className="flex-1 px-1 py-3 text-[13px] text-white/60 font-medium min-h-[20px]">
-                  {typing || <span className="text-white/20">Type what you want to change...</span>}
-                  {typing && typing.length < step.cmd.length && <span className="inline-block w-[2px] h-[14px] bg-white/50 ml-0.5 align-middle animate-pulse" />}
+                <div className="w-5 h-5 rounded-lg bg-accent/10 flex items-center justify-center text-[10px]">✨</div>
+                <span className="text-xs font-bold text-black">Nova AI</span>
+              </div>
+              <div className="flex gap-1.5"><div className="w-4 h-4 rounded bg-black/[0.04] flex items-center justify-center text-[8px] text-black/20">↻</div><div className="w-4 h-4 rounded bg-black/[0.04] flex items-center justify-center text-[8px] text-black/20">×</div></div>
+            </div>
+
+            {/* Chat content */}
+            <div className="flex-1 px-4 py-4 flex flex-col justify-end gap-3 overflow-hidden">
+              {sent && (
+                <>
+                  {/* User message */}
+                  <div className="self-end">
+                    <div className="px-3 py-2 rounded-2xl rounded-br-sm bg-accent/10 text-[11px] text-black/60 max-w-[200px]">{step.cmd}</div>
+                  </div>
+                  {/* Processing steps */}
+                  <div className="flex flex-col gap-2">
+                    {step.steps.map((s, i) => (
+                      <div key={i} className={`flex items-center gap-2 text-[11px] ${i < visibleSteps ? '' : 'hidden'}`}>
+                        {i < visibleSteps - 1 || applied ? (
+                          <span className="text-accent text-[10px]">✓</span>
+                        ) : (
+                          <span className="w-3 h-3 border-2 border-accent/30 border-t-accent rounded-full animate-spin shrink-0" />
+                        )}
+                        <span className={i < visibleSteps - 1 || applied ? 'text-black/40' : 'text-black/60 font-medium'}>{s}</span>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Input */}
+            <div className="px-3 py-3 border-t border-black/[0.06]">
+              <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl border border-black/[0.06] bg-[#fafafa]">
+                <div className="flex-1 text-[11px] min-h-[16px]">
+                  {!sent ? (
+                    <>
+                      <span className="text-black/50">{typing}</span>
+                      {typing && typing.length < step.cmd.length && <span className="inline-block w-[1.5px] h-[12px] bg-accent ml-0.5 align-middle animate-pulse" />}
+                      {!typing && <span className="text-black/20">Ask me anything...</span>}
+                    </>
+                  ) : (
+                    <span className="text-black/20">Ask me anything...</span>
+                  )}
                 </div>
-                {typing.length === step.cmd.length && (
-                  <div className="px-4 py-2 rounded-xl text-[11px] font-semibold text-black bg-white mr-1 animate-[fade-in_0.2s_ease]">Apply</div>
-                )}
+                <div className="flex items-center gap-1">
+                  <div className="w-5 h-5 rounded-full bg-accent flex items-center justify-center text-white text-[9px]">↑</div>
+                </div>
               </div>
             </div>
           </div>
