@@ -1,236 +1,215 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
-const CMDS = [
-  { cmd: 'Change la couleur accent en violet', steps: ['Scan des éléments accent', 'Application de la teinte', 'Harmonisation globale'], do: 'color' },
-  { cmd: 'Ajoute une galerie photos', steps: ['Sélection des images', 'Construction de la grille', 'Intégration dans la page'], do: 'gallery' },
-  { cmd: 'Ajoute des témoignages clients', steps: ['Génération des avis', 'Design des cartes', 'Placement sous la galerie'], do: 'testimonials' },
-  { cmd: 'Passe le hero en split layout', steps: ['Réorganisation du contenu', 'Image à droite', 'Alignement du texte'], do: 'split' },
+const BUILD_STEPS = [
+  'Creating a professional header',
+  'Designing the hero section',
+  'Adding key statistics',
+  'Building services section',
+  'Adding photo gallery',
+  'Showcasing testimonials',
+  'Connecting contact info',
 ]
 
 function EditorDemo() {
-  const [phase, setPhase] = useState(0)
   const [typing, setTyping] = useState('')
-  const [visibleSteps, setVisibleSteps] = useState(0)
-  const [sent, setSent] = useState(false)
-
-  // Site state — elements change one by one
-  const [ac, setAc] = useState('#f97316')
-  const [navColor, setNavColor] = useState(false)
-  const [statsColor, setStatsColor] = useState(false)
-  const [cardsColor, setCardsColor] = useState(false)
-  const [gallery, setGallery] = useState(0) // 0-6 images revealed
-  const [testimonials, setTestimonials] = useState(0) // 0-3 cards
-  const [split, setSplit] = useState(false)
-  const [heroTransition, setHeroTransition] = useState(false)
-
+  const [building, setBuilding] = useState(false)
+  const [buildStep, setBuildStep] = useState(-1)
+  const [show, setShow] = useState({ nav: false, hero: false, stats: false, services: false, gallery: false, testimonials: false, contact: false })
   const siteRef = useRef(null)
-  const cmd = CMDS[phase]
+  const prompt = 'Créez un site professionnel pour mon cabinet dentaire à Genève'
+  const ac = '#3b82f6'
 
   useEffect(() => {
     let c = false
     const w = (ms) => new Promise(r => setTimeout(r, ms))
     const run = async () => {
-      setTyping(''); setSent(false); setVisibleSteps(0)
-      await w(1200)
-      // Type
-      for (let i = 0; i <= cmd.cmd.length; i++) { if (c) return; setTyping(cmd.cmd.slice(0, i)); await w(28) }
-      await w(400); if (c) return; setSent(true)
-
-      // Steps + sequential changes
-      if (cmd.do === 'color') {
-        setVisibleSteps(1); await w(500); if (c) return
-        setNavColor(true); setAc('#7c3aed'); await w(300); if (c) return
-        setVisibleSteps(2); await w(400); if (c) return
-        setStatsColor(true); await w(300); if (c) return
-        setCardsColor(true); await w(300); if (c) return
-        setVisibleSteps(3)
-      }
-      if (cmd.do === 'gallery') {
-        setVisibleSteps(1); await w(500); if (c) return
-        // Reveal images one by one
-        for (let i = 1; i <= 6; i++) { if (c) return; setGallery(i); await w(150) }
-        setVisibleSteps(2); await w(400); if (c) return
-        siteRef.current?.scrollTo({ top: siteRef.current.scrollHeight, behavior: 'smooth' })
-        await w(300); setVisibleSteps(3)
-      }
-      if (cmd.do === 'testimonials') {
-        setVisibleSteps(1); await w(500); if (c) return
-        for (let i = 1; i <= 3; i++) { if (c) return; setTestimonials(i); await w(400) }
-        setVisibleSteps(2); await w(300); if (c) return
-        siteRef.current?.scrollTo({ top: siteRef.current.scrollHeight, behavior: 'smooth' })
-        await w(300); setVisibleSteps(3)
-      }
-      if (cmd.do === 'split') {
-        setVisibleSteps(1); await w(500); if (c) return
-        setHeroTransition(true); await w(400); if (c) return
-        setVisibleSteps(2); await w(300); if (c) return
-        setSplit(true); setHeroTransition(false); await w(300); if (c) return
-        setVisibleSteps(3)
-      }
-
-      await w(3500); if (c) return
-      setPhase(p => (p + 1) % CMDS.length)
+      // Reset
+      setTyping(''); setBuilding(false); setBuildStep(-1)
+      setShow({ nav: false, hero: false, stats: false, services: false, gallery: false, testimonials: false, contact: false })
+      await w(1500)
+      // Type prompt
+      for (let i = 0; i <= prompt.length; i++) { if (c) return; setTyping(prompt.slice(0, i)); await w(25) }
+      await w(600); if (c) return
+      setBuilding(true)
+      // Build each section
+      setBuildStep(0); await w(400); if (c) return; setShow(s => ({ ...s, nav: true }))
+      await w(600); if (c) return
+      setBuildStep(1); await w(300); if (c) return; setShow(s => ({ ...s, hero: true }))
+      await w(800); if (c) return
+      setBuildStep(2); await w(300); if (c) return; setShow(s => ({ ...s, stats: true }))
+      siteRef.current?.scrollTo({ top: 100, behavior: 'smooth' })
+      await w(600); if (c) return
+      setBuildStep(3); await w(300); if (c) return; setShow(s => ({ ...s, services: true }))
+      siteRef.current?.scrollTo({ top: 250, behavior: 'smooth' })
+      await w(700); if (c) return
+      setBuildStep(4); await w(300); if (c) return; setShow(s => ({ ...s, gallery: true }))
+      siteRef.current?.scrollTo({ top: 400, behavior: 'smooth' })
+      await w(700); if (c) return
+      setBuildStep(5); await w(300); if (c) return; setShow(s => ({ ...s, testimonials: true }))
+      siteRef.current?.scrollTo({ top: 550, behavior: 'smooth' })
+      await w(700); if (c) return
+      setBuildStep(6); await w(300); if (c) return; setShow(s => ({ ...s, contact: true }))
+      siteRef.current?.scrollTo({ top: siteRef.current.scrollHeight, behavior: 'smooth' })
+      await w(5000); if (c) return
+      run() // Loop
     }
     run(); return () => { c = true }
-  }, [phase])
+  }, [])
 
-  const currentAc = navColor ? ac : '#f97316'
+  const sectionStyle = (visible) => ({ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 0.6s cubic-bezier(0.23,1,0.32,1)' })
 
   return (
     <section className="relative z-10 max-w-5xl mx-auto px-6 py-20">
       <div className="text-center mb-12">
-        <p className="text-[12px] font-semibold uppercase tracking-widest text-accent mb-3">Éditeur IA</p>
-        <h2 className="text-3xl md:text-4xl font-black tracking-tight mb-4">Modifiez tout. En temps réel.</h2>
-        <p className="text-sm text-black/35 max-w-md mx-auto">Regardez chaque élément changer un par un.</p>
+        <p className="text-[12px] font-semibold uppercase tracking-widest text-accent mb-3">Voyez la magie opérer</p>
+        <h2 className="text-3xl md:text-4xl font-black tracking-tight mb-4">Votre site se construit sous vos yeux</h2>
+        <p className="text-sm text-black/35 max-w-md mx-auto">Décrivez votre business. Regardez Nova construire chaque section en temps réel.</p>
       </div>
 
-      <div className="relative">
-        <div className="rounded-2xl overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.12)] border border-black/[0.06]">
-          {/* Chrome */}
+      <div className="flex gap-4">
+        {/* Site building */}
+        <div className="flex-1 rounded-2xl overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.10)] border border-black/[0.06]">
           <div className="flex items-center gap-2 px-4 py-2.5 bg-[#fafafa] border-b border-black/[0.06]">
             <div className="flex gap-1.5"><div className="w-3 h-3 rounded-full bg-[#ff5f57]" /><div className="w-3 h-3 rounded-full bg-[#febc2e]" /><div className="w-3 h-3 rounded-full bg-[#28c840]" /></div>
-            <div className="flex-1 mx-8"><div className="bg-white rounded-lg px-4 py-1.5 text-[11px] text-black/25 text-center font-mono border border-black/[0.04]">mon-business.novaos.io</div></div>
+            <div className="flex-1 mx-6"><div className="bg-white rounded-lg px-3 py-1.5 text-[10px] text-black/20 text-center font-mono border border-black/[0.04]">cabinet-leman.novaos.io</div></div>
           </div>
+          <div ref={siteRef} className="bg-white overflow-y-auto scroll-smooth" style={{ maxHeight: '500px', background: show.nav ? '#fff' : '#f5f5f5', transition: 'background 0.5s' }}>
+            {/* Empty state */}
+            {!show.nav && <div className="h-[500px] flex items-center justify-center"><div className="text-center"><div className="text-2xl mb-2">✨</div><div className="text-[11px] text-black/20">En attente de votre description...</div></div></div>}
 
-          {/* Site */}
-          <div ref={siteRef} className="bg-white overflow-y-auto scroll-smooth" style={{ maxHeight: '480px' }}>
             {/* Nav */}
-            <div className="flex items-center justify-between px-6 py-3 border-b border-black/[0.04]">
-              <span className="text-xs font-black text-black">Mon Business</span>
-              <div className="flex gap-4 text-[9px] text-black/25">
-                <span>Services</span>
-                {gallery > 0 && <span className="transition-colors duration-500" style={{ color: currentAc }}>Galerie</span>}
-                <span>Contact</span>
+            <div style={sectionStyle(show.nav)}>
+              <div className="flex items-center justify-between px-5 py-3 border-b border-black/[0.04]">
+                <span className="text-xs font-black" style={{ color: '#1e3a5f' }}>Cabinet Dentaire Léman</span>
+                <div className="flex gap-3 text-[8px] text-black/25"><span>Services</span><span>Équipe</span><span>Avis</span><span>Contact</span></div>
+                <div className="px-3 py-1 rounded-full text-[7px] font-bold text-white" style={{ background: ac }}>Prendre RDV</div>
               </div>
-              <div className="px-3.5 py-1.5 rounded-full text-[8px] font-bold text-white transition-colors duration-700" style={{ background: navColor ? ac : '#f97316' }}>Réserver</div>
             </div>
 
             {/* Hero */}
-            <div style={{ opacity: heroTransition ? 0.5 : 1, transform: heroTransition ? 'scale(0.98)' : 'scale(1)', transition: 'all 0.4s' }}>
-              {split ? (
-                <div className="flex gap-5 p-6 items-center">
-                  <div className="flex-1">
-                    <div className="text-[9px] uppercase tracking-widest mb-2 transition-colors duration-700" style={{ color: currentAc }}>Bienvenue</div>
-                    <div className="text-xl font-black text-black leading-tight mb-2">Votre business<br/>mérite le meilleur</div>
-                    <div className="text-[9px] text-black/30 mb-4">Description professionnelle générée par Nova.</div>
-                    <div className="flex gap-2">
-                      <div className="px-4 py-2 rounded-full text-[8px] font-bold text-white transition-colors duration-700" style={{ background: currentAc }}>Commencer</div>
-                      <div className="px-4 py-2 rounded-full text-[8px] font-bold text-black/30 border border-black/10">En savoir +</div>
-                    </div>
-                  </div>
-                  <div className="w-[42%] h-44 rounded-2xl overflow-hidden shrink-0"><img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=500&q=70" alt="" className="w-full h-full object-cover" /></div>
-                </div>
-              ) : (
-                <div className="relative h-48 overflow-hidden">
-                  <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=900&q=70" alt="" className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="text-[9px] uppercase tracking-widest mb-2 text-white/50">Bienvenue</div>
-                      <div className="text-xl font-black text-white mb-2">Votre titre accrocheur</div>
-                      <div className="text-[9px] text-white/50 mb-4">Sous-titre généré par Nova</div>
-                      <div className="inline-block px-5 py-2 rounded-full text-[8px] font-bold text-white transition-colors duration-700" style={{ background: currentAc }}>Découvrir</div>
-                    </div>
+            <div style={sectionStyle(show.hero)}>
+              <div className="relative h-44 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=800&q=70" alt="" className="w-full h-full object-cover" style={{ opacity: show.hero ? 1 : 0, transition: 'opacity 1s ease 0.2s' }} />
+                <div className="absolute inset-0 flex items-center px-6" style={{ background: 'linear-gradient(135deg, rgba(30,58,95,0.85), rgba(30,58,95,0.4))' }}>
+                  <div>
+                    <div className="text-[8px] text-white/40 uppercase tracking-widest mb-1">Depuis 2008 · Genève</div>
+                    <div className="text-lg font-black text-white leading-tight mb-2">Votre sourire mérite<br/>les meilleurs soins</div>
+                    <div className="text-[9px] text-white/50 mb-3 max-w-[250px]">Orthodontie, implants et esthétique dentaire au cœur de Genève.</div>
+                    <div className="flex gap-2"><div className="px-4 py-1.5 rounded-full text-[7px] font-bold text-white" style={{ background: ac }}>Rendez-vous</div><div className="px-4 py-1.5 rounded-full text-[7px] font-bold text-white/60 border border-white/20">Découvrir</div></div>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
 
             {/* Stats */}
-            <div className="flex justify-around py-3 mx-5 my-4 rounded-xl transition-all duration-700" style={{ background: statsColor ? `${ac}08` : '#f973160a', border: `1px solid ${statsColor ? ac + '15' : '#f9731615'}` }}>
-              {[{ n: '15+', l: 'Années' }, { n: '500+', l: 'Clients' }, { n: '4.9/5', l: 'Google' }].map(s => (
-                <div key={s.n} className="text-center"><div className="text-sm font-black transition-colors duration-700" style={{ color: statsColor ? ac : '#f97316' }}>{s.n}</div><div className="text-[7px] text-black/25">{s.l}</div></div>
-              ))}
-            </div>
-
-            {/* Services */}
-            <div className="px-5 mb-4">
-              <div className="text-[9px] uppercase tracking-widest mb-2 transition-colors duration-700" style={{ color: currentAc }}>Services</div>
-              <div className="grid grid-cols-3 gap-2">
-                {[{ e: '💡', s: 'Consulting', p: '150 CHF' }, { e: '📚', s: 'Formation', p: '200 CHF' }, { e: '🎯', s: 'Coaching', p: '120 CHF' }].map((s, i) => (
-                  <div key={i} className="p-3 rounded-xl border border-black/[0.04]">
-                    <span className="text-base block mb-1.5">{s.e}</span>
-                    <div className="text-[9px] font-bold text-black mb-0.5">{s.s}</div>
-                    <div className="text-[7px] text-black/25 mb-1.5">Service professionnel</div>
-                    <div className="text-[8px] font-bold transition-colors duration-700" style={{ color: cardsColor ? ac : '#f97316' }}>Dès {s.p}</div>
-                  </div>
+            <div style={sectionStyle(show.stats)}>
+              <div className="grid grid-cols-4 border-b border-black/[0.04]">
+                {[{ n: '15+', l: 'Années' }, { n: '3 200', l: 'Patients' }, { n: '4.9/5', l: 'Google' }, { n: '24h', l: 'Réponse' }].map(s => (
+                  <div key={s.n} className="text-center py-3 border-r last:border-r-0 border-black/[0.04]"><div className="text-sm font-black" style={{ color: '#1e3a5f' }}>{s.n}</div><div className="text-[6px] text-black/25">{s.l}</div></div>
                 ))}
               </div>
             </div>
 
-            {/* Gallery — images appear one by one */}
-            {gallery > 0 && (
-              <div className="px-5 mb-4">
-                <div className="text-[9px] uppercase tracking-widest mb-2" style={{ color: currentAc }}>Galerie</div>
+            {/* Services */}
+            <div style={sectionStyle(show.services)}>
+              <div className="px-5 py-5">
+                <div className="text-[8px] uppercase tracking-widest mb-1" style={{ color: ac }}>Nos services</div>
+                <div className="text-sm font-black mb-4" style={{ color: '#1e3a5f' }}>Des soins d'excellence</div>
+                <div className="grid grid-cols-3 gap-2">
+                  {[{ e: '🦷', n: 'Orthodontie', p: '2 500 CHF' }, { e: '✨', n: 'Esthétique', p: '800 CHF' }, { e: '🔧', n: 'Implants', p: '3 000 CHF' }].map((s, i) => (
+                    <div key={i} className="p-3 rounded-xl border border-black/[0.04]" style={{ opacity: show.services ? 1 : 0, transform: show.services ? 'translateY(0)' : 'translateY(10px)', transition: `all 0.4s ease ${i * 0.15}s` }}>
+                      <span className="text-base block mb-1.5">{s.e}</span>
+                      <div className="text-[8px] font-bold text-black mb-0.5">{s.n}</div>
+                      <div className="text-[7px] text-black/25 mb-1">Soins spécialisés</div>
+                      <div className="text-[7px] font-bold" style={{ color: ac }}>Dès {s.p}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Gallery */}
+            <div style={sectionStyle(show.gallery)}>
+              <div className="px-5 py-4 bg-[#f8f9fb]">
+                <div className="text-[8px] uppercase tracking-widest mb-1" style={{ color: ac }}>Galerie</div>
                 <div className="grid grid-cols-4 gap-1.5">
-                  {['photo-1497366216548-37526070297c', 'photo-1497366811353-6870744d04b2', 'photo-1552664730-d307ca884978', 'photo-1573497019940-1c28c88b4f3e', 'photo-1507003211169-0a1dd7228f2d', 'photo-1460925895917-afdab827c52f'].map((id, i) => (
-                    <div key={i} className="h-14 rounded-lg overflow-hidden" style={{ opacity: i < gallery ? 1 : 0, transform: i < gallery ? 'scale(1)' : 'scale(0.8)', transition: 'all 0.4s ease' }}>
+                  {['photo-1629909613654-28e377c37b09', 'photo-1588776814546-1ffcf47267a5', 'photo-1606811841689-23dfddce3e95', 'photo-1497366216548-37526070297c'].map((id, i) => (
+                    <div key={i} className="h-16 rounded-lg overflow-hidden" style={{ opacity: show.gallery ? 1 : 0, transform: show.gallery ? 'scale(1)' : 'scale(0.85)', transition: `all 0.4s ease ${i * 0.1}s` }}>
                       <img src={`https://images.unsplash.com/${id}?w=200&q=60`} alt="" className="w-full h-full object-cover" />
                     </div>
                   ))}
                 </div>
               </div>
-            )}
+            </div>
 
-            {/* Testimonials — cards appear one by one */}
-            {testimonials > 0 && (
-              <div className="px-5 mb-4">
-                <div className="text-[9px] uppercase tracking-widest mb-2" style={{ color: currentAc }}>Avis clients</div>
+            {/* Testimonials */}
+            <div style={sectionStyle(show.testimonials)}>
+              <div className="px-5 py-4">
+                <div className="text-[8px] uppercase tracking-widest mb-1" style={{ color: ac }}>Avis patients</div>
                 <div className="grid grid-cols-3 gap-2">
-                  {[{ t: 'Service excellent, très professionnel !', n: 'Marie L.' }, { t: 'Je recommande vivement.', n: 'Pierre D.' }, { t: 'Résultat au-delà de mes attentes.', n: 'Sophie R.' }].map((r, i) => (
-                    <div key={i} className="p-3 rounded-xl border border-black/[0.04] bg-black/[0.01]" style={{ opacity: i < testimonials ? 1 : 0, transform: i < testimonials ? 'translateY(0)' : 'translateY(12px)', transition: 'all 0.5s ease' }}>
-                      <div className="flex gap-0.5 mb-1.5">{[...Array(5)].map((_, j) => <span key={j} className="text-[7px] text-amber-400">★</span>)}</div>
-                      <div className="text-[8px] text-black/35 italic mb-1.5">"{r.t}"</div>
-                      <div className="text-[8px] font-bold text-black">{r.n}</div>
+                  {[{ t: 'Excellent cabinet, très rassurant.', n: 'Marie L.' }, { t: 'Orthodontie parfaitement réalisée.', n: 'Pierre K.' }, { t: 'Qualité supérieure, je recommande.', n: 'Sophie R.' }].map((r, i) => (
+                    <div key={i} className="p-2.5 rounded-xl border border-black/[0.04]" style={{ opacity: show.testimonials ? 1 : 0, transform: show.testimonials ? 'translateY(0)' : 'translateY(10px)', transition: `all 0.4s ease ${i * 0.2}s` }}>
+                      <div className="flex gap-0.5 mb-1">{[...Array(5)].map((_, j) => <span key={j} className="text-[6px] text-amber-400">★</span>)}</div>
+                      <div className="text-[7px] text-black/35 italic mb-1">"{r.t}"</div>
+                      <div className="text-[7px] font-bold text-black">{r.n}</div>
                     </div>
                   ))}
                 </div>
               </div>
-            )}
+            </div>
 
-            <div className="px-5 py-3 border-t border-black/[0.04] flex justify-between">
-              <span className="text-[8px] text-black/20">© Mon Business 2024</span>
-              <span className="text-[8px] text-black/15">Propulsé par Nova OS</span>
+            {/* Contact */}
+            <div style={sectionStyle(show.contact)}>
+              <div className="px-5 py-3 border-t border-black/[0.04] flex gap-6">
+                <div><div className="text-[6px] text-black/20 uppercase">Email</div><div className="text-[8px] font-medium">contact@cabinet-leman.ch</div></div>
+                <div><div className="text-[6px] text-black/20 uppercase">Tél</div><div className="text-[8px] font-medium">+41 22 700 40 50</div></div>
+                <div><div className="text-[6px] text-black/20 uppercase">Adresse</div><div className="text-[8px] font-medium">Rue du Lac 15, Genève</div></div>
+              </div>
+              <div className="px-5 py-2 border-t border-black/[0.04] flex justify-between">
+                <span className="text-[6px] text-black/15">© Cabinet Dentaire Léman</span>
+                <span className="text-[6px] text-black/10">Propulsé par Nova OS</span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Glassy AI bubble */}
-        <div className="absolute -bottom-8 right-4 md:right-8 w-[260px] md:w-[300px] z-10">
-          <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.72)', backdropFilter: 'blur(24px)', border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 16px 56px rgba(0,0,0,0.14)' }}>
+        {/* AI panel */}
+        <div className="w-[280px] shrink-0 hidden md:block">
+          <div className="rounded-2xl overflow-hidden sticky top-4" style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(24px)', border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 16px 56px rgba(0,0,0,0.12)' }}>
             <div className="flex items-center justify-between px-4 py-2.5 border-b border-black/[0.06]">
               <div className="flex items-center gap-2"><div className="w-5 h-5 rounded-lg bg-accent/15 flex items-center justify-center text-[10px]">✨</div><span className="text-[11px] font-bold text-black">Nova AI</span></div>
-              <div className="w-4 h-4 rounded-full bg-black/[0.04] flex items-center justify-center text-[7px] text-black/20">×</div>
+              <div className="flex gap-1.5"><div className="w-4 h-4 rounded-full bg-black/[0.04] flex items-center justify-center text-[7px] text-black/20">↻</div><div className="w-4 h-4 rounded-full bg-black/[0.04] flex items-center justify-center text-[7px] text-black/20">×</div></div>
             </div>
-            <div className="px-4 py-3 flex flex-col gap-2 min-h-[130px] justify-end">
-              {sent && (
-                <>
-                  <div className="self-end"><div className="px-3 py-2 rounded-2xl rounded-br-sm bg-accent/10 text-[10px] text-black/50 max-w-[220px]">{cmd.cmd}</div></div>
-                  <div className="flex flex-col gap-1.5 mt-1">
-                    {cmd.steps.map((s, i) => i < visibleSteps && (
-                      <div key={i} className="flex items-center gap-1.5 text-[10px]">
-                        {i < visibleSteps - 1 || visibleSteps === cmd.steps.length ? <span className="text-accent">✓</span> : <span className="w-2.5 h-2.5 border-[1.5px] border-accent/30 border-t-accent rounded-full animate-spin shrink-0" />}
-                        <span className={i < visibleSteps - 1 || visibleSteps === cmd.steps.length ? 'text-black/30' : 'text-black/50'}>{s}</span>
+
+            <div className="px-4 py-4">
+              {/* User prompt */}
+              {typing && <div className="mb-3 px-3 py-2 rounded-2xl rounded-br-sm bg-accent/10 text-[10px] text-black/50">{typing}{typing.length < prompt.length && <span className="inline-block w-[1px] h-[10px] bg-accent ml-0.5 align-middle animate-pulse" />}</div>}
+
+              {/* Building steps */}
+              {building && (
+                <div className="mt-2">
+                  <div className="text-[10px] font-semibold text-black mb-3">Generating your site</div>
+                  <div className="flex flex-col gap-2">
+                    {BUILD_STEPS.map((s, i) => (
+                      <div key={i} className="flex items-center gap-2 text-[10px]" style={{ opacity: i <= buildStep ? 1 : 0.3, transition: 'opacity 0.3s' }}>
+                        {i < buildStep ? <span className="text-accent">✓</span> : i === buildStep ? <span className="w-3 h-3 border-[1.5px] border-accent/30 border-t-accent rounded-full animate-spin shrink-0" /> : <span className="w-3 h-3 rounded-full border border-black/10 shrink-0" />}
+                        <span className={i < buildStep ? 'text-black/30' : i === buildStep ? 'text-black/60 font-medium' : 'text-black/20'}>{s}</span>
                       </div>
                     ))}
                   </div>
-                </>
+                </div>
               )}
             </div>
+
             <div className="px-3 pb-3">
               <div className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-black/[0.06] bg-white/60">
-                <div className="flex-1 text-[10px] min-h-[14px]">
-                  {!sent ? (<><span className="text-black/50">{typing}</span>{typing && typing.length < cmd.cmd.length && <span className="inline-block w-[1px] h-[10px] bg-accent ml-0.5 align-middle animate-pulse" />}{!typing && <span className="text-black/20">Ask me anything...</span>}</>) : <span className="text-black/20">Ask me anything...</span>}
-                </div>
+                <span className="text-[10px] text-black/20 flex-1">Ask me anything...</span>
                 <div className="w-5 h-5 rounded-full bg-accent flex items-center justify-center text-white text-[8px]">↑</div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-
-      <div className="mt-14 text-center">
-        <p className="text-[11px] text-black/20">Chaque élément change un par un — en temps réel sous vos yeux</p>
       </div>
     </section>
   )
