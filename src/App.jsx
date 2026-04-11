@@ -1,5 +1,117 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+
+const DEMO_STEPS = [
+  { cmd: 'Passe en mode sombre', bg: '#0a0a0a', text: '#fff', accent: '#6c5ce7', cardBg: 'rgba(255,255,255,0.04)', border: 'rgba(255,255,255,0.06)', sub: 'rgba(255,255,255,0.3)', heroBg: 'rgba(108,92,231,0.3)' },
+  { cmd: 'Change la couleur en vert nature', bg: '#ffffff', text: '#1a3a2a', accent: '#22c55e', cardBg: '#f0fdf4', border: 'rgba(0,0,0,0.05)', sub: 'rgba(0,0,0,0.3)', heroBg: 'rgba(34,197,94,0.2)' },
+  { cmd: 'Rends le design luxueux et doré', bg: '#faf9f6', text: '#1a1a1a', accent: '#b8860b', cardBg: '#fffbf0', border: 'rgba(0,0,0,0.06)', sub: 'rgba(0,0,0,0.35)', heroBg: 'rgba(184,134,11,0.2)' },
+  { cmd: 'Style moderne bleu électrique', bg: '#ffffff', text: '#0a0a0a', accent: '#3b82f6', cardBg: '#f0f7ff', border: 'rgba(0,0,0,0.05)', sub: 'rgba(0,0,0,0.3)', heroBg: 'rgba(59,130,246,0.2)' },
+]
+
+function EditorDemo() {
+  const [phase, setPhase] = useState(0) // 0-3: which style
+  const [typing, setTyping] = useState('')
+  const [applied, setApplied] = useState(false)
+  const step = DEMO_STEPS[phase]
+  const prevStyle = DEMO_STEPS[(phase + DEMO_STEPS.length - 1) % DEMO_STEPS.length]
+  const current = applied ? step : prevStyle
+
+  useEffect(() => {
+    let cancelled = false
+    const run = async () => {
+      // Type the command
+      setApplied(false)
+      setTyping('')
+      await new Promise(r => setTimeout(r, 800))
+      for (let i = 0; i <= step.cmd.length; i++) {
+        if (cancelled) return
+        setTyping(step.cmd.slice(0, i))
+        await new Promise(r => setTimeout(r, 40))
+      }
+      // Wait then apply
+      await new Promise(r => setTimeout(r, 600))
+      if (cancelled) return
+      setApplied(true)
+      // Wait then next
+      await new Promise(r => setTimeout(r, 3000))
+      if (cancelled) return
+      setPhase(p => (p + 1) % DEMO_STEPS.length)
+    }
+    run()
+    return () => { cancelled = true }
+  }, [phase])
+
+  return (
+    <section className="relative z-10 max-w-4xl mx-auto px-6 py-20">
+      <div className="text-center mb-10">
+        <p className="text-[12px] font-semibold uppercase tracking-widest text-accent mb-3">Éditeur IA</p>
+        <h2 className="text-3xl md:text-4xl font-black tracking-tight mb-4">Modifiez tout. En temps réel.</h2>
+        <p className="text-sm text-black/35 max-w-md mx-auto">Tapez ce que vous voulez. Regardez votre site changer instantanément.</p>
+      </div>
+
+      <div className="rounded-2xl overflow-hidden shadow-[0_8px_60px_rgba(0,0,0,0.10)] border border-black/[0.06]">
+        {/* Chrome */}
+        <div className="flex items-center gap-2 px-4 py-2.5 bg-[#1a1a1a]">
+          <div className="flex gap-1.5"><div className="w-3 h-3 rounded-full bg-white/10" /><div className="w-3 h-3 rounded-full bg-white/10" /><div className="w-3 h-3 rounded-full bg-white/10" /></div>
+          <div className="flex-1 mx-8"><div className="bg-white/[0.06] rounded-lg px-4 py-1.5 text-[11px] text-white/25 text-center font-mono">mon-business.novaos.io</div></div>
+        </div>
+
+        {/* Site that changes */}
+        <div className="relative" style={{ background: current.bg, color: current.text, transition: 'all 0.6s ease' }}>
+          <div className="px-6 md:px-8 py-5">
+            {/* Nav */}
+            <div className="flex items-center justify-between mb-5 pb-3" style={{ borderBottom: `1px solid ${current.border}`, transition: 'all 0.6s ease' }}>
+              <span className="text-sm font-black" style={{ color: current.text, transition: 'color 0.6s' }}>Mon Business</span>
+              <div className="flex gap-4 text-[10px]" style={{ color: current.sub, transition: 'color 0.6s' }}><span>Services</span><span>Avis</span><span>Contact</span></div>
+              <div className="px-3.5 py-1.5 rounded-full text-[9px] font-bold text-white" style={{ background: current.accent, transition: 'background 0.6s' }}>Réserver</div>
+            </div>
+            {/* Hero */}
+            <div className="relative h-32 md:h-36 rounded-xl overflow-hidden mb-5">
+              <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=70" alt="" className="w-full h-full object-cover" />
+              <div className="absolute inset-0 flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${current.bg}dd, ${current.heroBg})`, transition: 'all 0.6s ease' }}>
+                <div className="text-center">
+                  <div className="text-lg md:text-xl font-black mb-1" style={{ color: current.text, transition: 'color 0.6s' }}>Votre titre accrocheur</div>
+                  <div className="text-[11px] mb-3" style={{ color: current.sub, transition: 'color 0.6s' }}>Sous-titre généré par l'IA</div>
+                  <div className="inline-block px-4 py-1.5 rounded-full text-[10px] font-bold text-white" style={{ background: current.accent, transition: 'background 0.6s' }}>Commencer</div>
+                </div>
+              </div>
+            </div>
+            {/* Cards */}
+            <div className="grid grid-cols-3 gap-3 mb-3">
+              {['Consulting', 'Formation', 'Coaching'].map((s, i) => (
+                <div key={i} className="p-3 md:p-4 rounded-xl" style={{ background: current.cardBg, border: `1px solid ${current.border}`, transition: 'all 0.6s ease' }}>
+                  <div className="w-5 h-5 rounded-md mb-2" style={{ background: current.accent, opacity: 0.25, transition: 'background 0.6s' }} />
+                  <div className="text-[10px] font-bold mb-0.5" style={{ color: current.text, transition: 'color 0.6s' }}>{s}</div>
+                  <div className="text-[8px]" style={{ color: current.sub, transition: 'color 0.6s' }}>Description</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Floating command bar */}
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 w-[88%] max-w-[450px]">
+            <div className="rounded-2xl p-1" style={{ background: 'rgba(10,10,15,0.88)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.12)', boxShadow: '0 8px 40px rgba(0,0,0,0.4)' }}>
+              <div className="flex items-center gap-2">
+                <div className="pl-3 text-white/30 text-sm">✨</div>
+                <div className="flex-1 px-1 py-3 text-[13px] text-white/60 font-medium min-h-[20px]">
+                  {typing || <span className="text-white/20">Type what you want to change...</span>}
+                  {typing && typing.length < step.cmd.length && <span className="inline-block w-[2px] h-[14px] bg-white/50 ml-0.5 align-middle animate-pulse" />}
+                </div>
+                {typing.length === step.cmd.length && (
+                  <div className="px-4 py-2 rounded-xl text-[11px] font-semibold text-black bg-white mr-1 animate-[fade-in_0.2s_ease]">Apply</div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-6 text-center">
+        <p className="text-[11px] text-black/20">Couleurs · Textes · Images · Polices · Sections · Design — tout se change en une phrase</p>
+      </div>
+    </section>
+  )
+}
 
 export default function App() {
   const [input, setInput] = useState('')
@@ -56,184 +168,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* ━━━ PRODUCT PREVIEW — Full realistic site ━━━ */}
-      <section className="relative z-10 max-w-5xl mx-auto px-6 pb-20">
-        <div className="rounded-2xl overflow-hidden shadow-[0_8px_60px_rgba(0,0,0,0.10)] border border-black/[0.06]">
-          {/* Browser chrome */}
-          <div className="flex items-center gap-2 px-4 py-2.5 bg-[#f5f5f5] border-b border-black/[0.06]">
-            <div className="flex gap-1.5"><div className="w-3 h-3 rounded-full bg-[#ff5f57]" /><div className="w-3 h-3 rounded-full bg-[#febc2e]" /><div className="w-3 h-3 rounded-full bg-[#28c840]" /></div>
-            <div className="flex-1 mx-12"><div className="bg-white rounded-lg px-4 py-1.5 text-[11px] text-black/30 text-center font-mono border border-black/[0.04]">🔒 cabinet-leman.novaos.io</div></div>
-          </div>
-          {/* Site content */}
-          <div className="bg-white text-[#1a1a1a]" style={{ fontSize: '14px' }}>
-            {/* Nav */}
-            <div className="flex items-center justify-between px-8 py-4 border-b border-black/[0.04]">
-              <span className="text-base font-black" style={{ color: '#1e3a5f' }}>Cabinet Dentaire Léman</span>
-              <div className="hidden md:flex gap-6 text-[11px] text-black/35 font-medium"><span>Services</span><span>Équipe</span><span>Avis</span><span>Contact</span></div>
-              <div className="px-5 py-2 rounded-full text-[11px] font-semibold text-white" style={{ background: '#1e3a5f' }}>Prendre RDV</div>
-            </div>
-
-            {/* Hero with image */}
-            <div className="relative h-64">
-              <img src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1200&q=80" alt="" className="w-full h-full object-cover" />
-              <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(30,58,95,0.85), rgba(30,58,95,0.5))' }}>
-                <div className="h-full flex items-center px-10">
-                  <div>
-                    <p className="text-white/50 text-[10px] uppercase tracking-widest mb-2">Depuis 2008 à Genève</p>
-                    <h2 className="text-white text-2xl md:text-3xl font-black mb-3 leading-tight">Votre sourire mérite<br />les meilleurs soins</h2>
-                    <p className="text-white/60 text-xs mb-5 max-w-sm">Cabinet dentaire moderne au cœur de Genève. Orthodontie, implants et soins esthétiques.</p>
-                    <div className="flex gap-3">
-                      <div className="px-5 py-2.5 rounded-full text-[11px] font-semibold text-white" style={{ background: '#3b82f6' }}>Prendre rendez-vous</div>
-                      <div className="px-5 py-2.5 rounded-full text-[11px] font-semibold text-white/70 border border-white/20">Découvrir →</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-4 border-b border-black/[0.04]">
-              {[{ n: '15+', l: 'Années' }, { n: '3 200', l: 'Patients' }, { n: '4.9/5', l: 'Google' }, { n: '24h', l: 'Réponse' }].map(s => (
-                <div key={s.n} className="text-center py-5 border-r last:border-r-0 border-black/[0.04]">
-                  <div className="text-lg font-black" style={{ color: '#1e3a5f' }}>{s.n}</div>
-                  <div className="text-[9px] text-black/30">{s.l}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* Services */}
-            <div className="px-8 py-8">
-              <p className="text-[10px] uppercase tracking-widest mb-2" style={{ color: '#3b82f6' }}>Nos services</p>
-              <h3 className="text-lg font-black mb-6" style={{ color: '#1e3a5f' }}>Des soins d'excellence</h3>
-              <div className="grid grid-cols-3 gap-4">
-                {[
-                  { icon: '🦷', name: 'Orthodontie', desc: 'Alignement dentaire invisible et bagues classiques.', price: 'Dès 2 500 CHF' },
-                  { icon: '✨', name: 'Esthétique dentaire', desc: 'Blanchiment, facettes et sourire sur-mesure.', price: 'Dès 800 CHF' },
-                  { icon: '🔧', name: 'Implants', desc: 'Remplacement durable des dents manquantes.', price: 'Dès 3 000 CHF' },
-                ].map((s, i) => (
-                  <div key={i} className="p-5 rounded-xl border border-black/[0.04] hover:shadow-md">
-                    <span className="text-xl block mb-3">{s.icon}</span>
-                    <div className="text-xs font-bold mb-1.5" style={{ color: '#1e3a5f' }}>{s.name}</div>
-                    <div className="text-[10px] text-black/35 leading-relaxed mb-3">{s.desc}</div>
-                    <div className="text-[10px] font-bold" style={{ color: '#3b82f6' }}>{s.price}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Testimonials */}
-            <div className="px-8 py-8 bg-[#f8f9fb]">
-              <p className="text-[10px] uppercase tracking-widest mb-2" style={{ color: '#3b82f6' }}>Avis patients</p>
-              <h3 className="text-lg font-black mb-6" style={{ color: '#1e3a5f' }}>Ils nous font confiance</h3>
-              <div className="grid grid-cols-3 gap-4">
-                {[
-                  { text: 'Excellent cabinet, équipe très professionnelle et rassurante.', name: 'Marie L.', stars: 5 },
-                  { text: 'Mon traitement d\'orthodontie s\'est parfaitement déroulé.', name: 'Pierre K.', stars: 5 },
-                  { text: 'Je recommande vivement. Soins de qualité supérieure.', name: 'Sophie R.', stars: 5 },
-                ].map((t, i) => (
-                  <div key={i} className="p-4 rounded-xl bg-white border border-black/[0.04]">
-                    <div className="flex gap-0.5 mb-2">{[...Array(t.stars)].map((_, j) => <span key={j} className="text-[10px]" style={{ color: '#f59e0b' }}>★</span>)}</div>
-                    <p className="text-[10px] text-black/40 leading-relaxed mb-3">"{t.text}"</p>
-                    <div className="text-[10px] font-bold" style={{ color: '#1e3a5f' }}>{t.name}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Contact */}
-            <div className="px-8 py-6 flex items-center justify-between border-t border-black/[0.04]">
-              <div className="flex gap-8">
-                <div><div className="text-[8px] text-black/25 uppercase tracking-widest mb-1">Email</div><div className="text-[11px] font-medium">contact@cabinet-leman.ch</div></div>
-                <div><div className="text-[8px] text-black/25 uppercase tracking-widest mb-1">Téléphone</div><div className="text-[11px] font-medium">+41 22 700 40 50</div></div>
-                <div><div className="text-[8px] text-black/25 uppercase tracking-widest mb-1">Adresse</div><div className="text-[11px] font-medium">Rue du Lac 15, 1201 Genève</div></div>
-              </div>
-              <div className="text-[8px] text-black/15">Propulsé par Nova OS</div>
-            </div>
-
-            {/* Fake chat widget */}
-            <div className="absolute bottom-4 right-4 w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg" style={{ background: '#1e3a5f' }}>💬</div>
-          </div>
-        </div>
-        <p className="text-center text-[11px] text-black/20 mt-4">↑ Exemple de site généré par Nova OS en 5 minutes</p>
-      </section>
-
-      {/* ━━━ AI EDITOR DEMO ━━━ */}
-      <section className="relative z-10 max-w-5xl mx-auto px-6 py-20">
-        <div className="text-center mb-12">
-          <p className="text-[12px] font-semibold uppercase tracking-widest text-accent mb-3">Éditeur IA en temps réel</p>
-          <h2 className="text-3xl md:text-4xl font-black tracking-tight mb-4">Modifiez tout. En parlant.</h2>
-          <p className="text-sm text-black/40 max-w-lg mx-auto">Tapez ce que vous voulez changer et regardez votre site se transformer instantanément. Couleurs, textes, images, design — tout.</p>
-        </div>
-
-        {/* Editor mockup */}
-        <div className="rounded-2xl overflow-hidden shadow-[0_8px_60px_rgba(0,0,0,0.10)] border border-black/[0.06]">
-          {/* Browser chrome */}
-          <div className="flex items-center gap-2 px-4 py-2.5 bg-[#1a1a1a]">
-            <div className="flex gap-1.5"><div className="w-3 h-3 rounded-full bg-white/10" /><div className="w-3 h-3 rounded-full bg-white/10" /><div className="w-3 h-3 rounded-full bg-white/10" /></div>
-            <div className="flex-1 mx-12"><div className="bg-white/[0.06] rounded-lg px-4 py-1.5 text-[11px] text-white/30 text-center font-mono">votre-site.novaos.io</div></div>
-          </div>
-
-          {/* Site + command bar */}
-          <div className="relative bg-white">
-            {/* Mini site content */}
-            <div className="px-8 py-6">
-              {/* Nav */}
-              <div className="flex items-center justify-between mb-6 pb-3 border-b border-black/[0.04]">
-                <span className="text-sm font-bold text-black">Votre Business</span>
-                <div className="flex gap-5 text-[11px] text-black/30"><span>Services</span><span>Avis</span><span>Contact</span></div>
-                <div className="px-4 py-1.5 rounded-full text-[10px] font-semibold text-white bg-accent">Réserver</div>
-              </div>
-              {/* Hero */}
-              <div className="relative h-40 rounded-xl overflow-hidden mb-6">
-                <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=900&q=80" alt="" className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                  <div className="text-center"><div className="text-white text-xl font-bold mb-1">Votre titre accrocheur</div><div className="text-white/60 text-xs">Sous-titre descriptif</div></div>
-                </div>
-              </div>
-              {/* Cards */}
-              <div className="grid grid-cols-3 gap-3 mb-4">
-                {['Service 1', 'Service 2', 'Service 3'].map((s, i) => (
-                  <div key={i} className="p-4 rounded-xl border border-black/[0.04]">
-                    <div className="w-6 h-6 rounded-md mb-2 bg-accent/20" />
-                    <div className="text-[11px] font-semibold text-black mb-0.5">{s}</div>
-                    <div className="text-[9px] text-black/25">Description du service</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Floating command bar — THE FEATURE */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[85%] max-w-[500px]">
-              <div className="rounded-2xl p-1" style={{ background: 'rgba(10,10,15,0.85)', backdropFilter: 'blur(24px)', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 8px 40px rgba(0,0,0,0.3)' }}>
-                <div className="flex items-center gap-2">
-                  <div className="pl-3 text-white/30 text-sm">✨</div>
-                  <div className="flex-1 px-2 py-3 text-[13px] text-white/40 font-medium">Change the background to dark blue...</div>
-                  <div className="px-4 py-2 rounded-xl text-[11px] font-semibold text-black bg-white mr-1">Apply</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Example commands */}
-        <div className="mt-8 text-center">
-          <p className="text-[11px] text-black/25 mb-4">Exemples de modifications possibles :</p>
-          <div className="flex flex-wrap justify-center gap-2">
-            {[
-              'Passe en mode sombre',
-              'Change la couleur en vert',
-              'Ajoute une section galerie',
-              'Change la police en Playfair',
-              'Mets une photo de restaurant',
-              'Rends le design plus luxueux',
-              'Change les prix',
-              'Ajoute des témoignages',
-            ].map(cmd => (
-              <span key={cmd} className="text-[11px] px-3.5 py-2 rounded-full border border-black/[0.06] text-black/30 bg-white">"{cmd}"</span>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* ━━━ AI EDITOR — LIVE DEMO ━━━ */}
+      <EditorDemo />
 
       {/* ━━━ LOGOS ━━━ */}
       <section className="relative z-10 max-w-3xl mx-auto px-6 pb-16 text-center">
