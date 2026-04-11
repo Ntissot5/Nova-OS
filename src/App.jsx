@@ -1,109 +1,170 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
-const DEMOS = [
-  { cmd: 'Change le hero en split layout', steps: ['Analyse du hero actuel', 'Réorganisation en 2 colonnes', 'Repositionnement de l\'image', 'Finalisation du layout'], layout: 'split' },
-  { cmd: 'Passe en mode sombre luxueux', steps: ['Application du thème sombre', 'Changement de typographie', 'Ajustement des contrastes', 'Ajout de finitions dorées'], layout: 'dark' },
-  { cmd: 'Ajoute une galerie photos', steps: ['Sélection des images', 'Création de la grille', 'Optimisation des tailles', 'Intégration dans le design'], layout: 'gallery' },
-  { cmd: 'Design magazine avec grande image', steps: ['Changement du layout hero', 'Agrandissement de l\'image', 'Style éditorial appliqué', 'Harmonisation complète'], layout: 'magazine' },
+const CMDS = [
+  { cmd: 'Change la couleur accent en violet', steps: ['Identification des éléments', 'Application de la teinte', 'Harmonisation globale'], color: '#7c3aed' },
+  { cmd: 'Ajoute une section galerie photos', steps: ['Sélection des images', 'Création de la grille', 'Animation au scroll'], showGallery: true },
+  { cmd: 'Ajoute des témoignages clients', steps: ['Génération des avis', 'Design des cartes', 'Placement dans le flow'], showTestimonials: true },
+  { cmd: 'Passe le hero en split layout', steps: ['Réorganisation du contenu', 'Image à droite', 'Texte à gauche'], splitHero: true },
 ]
-
-function SiteLayout({ layout, transforming }) {
-  if (layout === 'split') return (
-    <div style={{ background: '#fff' }}>
-      <div className="flex items-center justify-between px-5 py-3" style={{ borderBottom: '1px solid rgba(0,0,0,0.05)' }}><span className="text-xs font-black text-black">Mon Business</span><div className="flex gap-3 text-[9px] text-black/25"><span>Services</span><span>Contact</span></div><div className="px-3 py-1 rounded-full text-[8px] font-bold text-white bg-blue-500">Réserver</div></div>
-      <div className="flex gap-4 p-5">
-        <div className="flex-1 flex flex-col justify-center">
-          <div className="text-[9px] text-blue-500 uppercase tracking-widest mb-2">Bienvenue</div>
-          <div className="text-lg font-black text-black leading-tight mb-2">Votre business<br/>mérite le meilleur</div>
-          <div className="text-[9px] text-black/30 mb-3 max-w-[200px]">Description professionnelle générée par l'IA pour votre activité.</div>
-          <div className="flex gap-2"><div className="px-4 py-1.5 rounded-full text-[8px] font-bold text-white bg-blue-500">Commencer</div><div className="px-4 py-1.5 rounded-full text-[8px] font-bold text-black/40 border border-black/10">En savoir +</div></div>
-        </div>
-        <div className="w-[45%] h-40 rounded-xl overflow-hidden shrink-0"><img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=500&q=70" alt="" className="w-full h-full object-cover" /></div>
-      </div>
-      <div className="flex justify-around py-3 mx-5 rounded-xl bg-blue-50/50 mb-4"><div className="text-center"><div className="text-sm font-black text-blue-500">15+</div><div className="text-[6px] text-black/20">Années</div></div><div className="text-center"><div className="text-sm font-black text-blue-500">500+</div><div className="text-[6px] text-black/20">Clients</div></div><div className="text-center"><div className="text-sm font-black text-blue-500">4.9</div><div className="text-[6px] text-black/20">Google</div></div></div>
-      <div className="grid grid-cols-3 gap-2 px-5 pb-4">{['💡 Consulting', '📚 Formation', '🎯 Coaching'].map((s, i) => <div key={i} className="p-3 rounded-xl bg-blue-50/30 border border-blue-100/50"><div className="text-[9px] font-bold text-black mb-0.5">{s}</div><div className="text-[7px] text-black/25">Description</div></div>)}</div>
-    </div>
-  )
-  if (layout === 'dark') return (
-    <div style={{ background: '#0a0a0a', color: '#fff' }}>
-      <div className="flex items-center justify-between px-5 py-3" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}><span className="text-xs font-black" style={{ fontFamily: 'Georgia, serif' }}>Mon Business</span><div className="flex gap-3 text-[9px] text-white/20"><span>Services</span><span>Contact</span></div><div className="px-3 py-1 rounded-full text-[8px] font-bold text-black bg-amber-400">Réserver</div></div>
-      <div className="relative h-48 overflow-hidden"><img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=70" alt="" className="w-full h-full object-cover opacity-30" /><div className="absolute inset-0 flex items-center justify-center text-center bg-gradient-to-t from-black/80 to-transparent"><div><div className="text-[9px] text-amber-400 uppercase tracking-[0.2em] mb-2">Premium</div><div className="text-xl font-black mb-2" style={{ fontFamily: 'Georgia, serif' }}>L'excellence à votre service</div><div className="text-[9px] text-white/30 mb-3">Une expérience sur mesure</div><div className="inline-block px-5 py-1.5 rounded-full text-[8px] font-bold text-black bg-amber-400">Découvrir</div></div></div></div>
-      <div className="flex justify-around py-3 mx-5 mt-4 rounded-xl" style={{ border: '1px solid rgba(255,255,255,0.06)' }}><div className="text-center"><div className="text-sm font-black text-amber-400">15+</div><div className="text-[6px] text-white/20">Années</div></div><div className="text-center"><div className="text-sm font-black text-amber-400">500+</div><div className="text-[6px] text-white/20">Clients</div></div><div className="text-center"><div className="text-sm font-black text-amber-400">4.9</div><div className="text-[6px] text-white/20">Google</div></div></div>
-      <div className="grid grid-cols-3 gap-2 p-5">{['✦ Consulting', '◆ Formation', '● Coaching'].map((s, i) => <div key={i} className="p-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}><div className="text-[9px] font-bold mb-0.5">{s}</div><div className="text-[7px] text-white/20">Premium service</div></div>)}</div>
-    </div>
-  )
-  if (layout === 'gallery') return (
-    <div style={{ background: '#fff' }}>
-      <div className="flex items-center justify-between px-5 py-3" style={{ borderBottom: '1px solid rgba(0,0,0,0.05)' }}><span className="text-xs font-black text-black">Mon Business</span><div className="flex gap-3 text-[9px] text-black/25"><span>Services</span><span>Galerie</span><span>Contact</span></div><div className="px-3 py-1 rounded-full text-[8px] font-bold text-white bg-violet-500">Réserver</div></div>
-      <div className="relative h-32 overflow-hidden"><img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=70" alt="" className="w-full h-full object-cover" /><div className="absolute inset-0 bg-black/40 flex items-center px-6"><div><div className="text-base font-black text-white mb-1">Notre univers</div><div className="text-[9px] text-white/60">Découvrez nos réalisations</div></div></div></div>
-      <div className="px-5 py-4"><div className="text-[9px] text-violet-500 uppercase tracking-widest mb-2">Galerie</div><div className="grid grid-cols-4 gap-1.5">{[1,2,3,4,5,6,7,8].map(i => <div key={i} className="h-16 rounded-lg overflow-hidden"><img src={`https://images.unsplash.com/photo-149736621654${i}-37526070297c?w=200&q=60`} alt="" className="w-full h-full object-cover" style={{ filter: `hue-rotate(${i*40}deg)` }} /></div>)}</div></div>
-      <div className="grid grid-cols-3 gap-2 px-5 pb-4">{['💡 Service 1', '📚 Service 2', '🎯 Service 3'].map((s, i) => <div key={i} className="p-2.5 rounded-xl bg-violet-50 border border-violet-100"><div className="text-[8px] font-bold text-black">{s}</div></div>)}</div>
-    </div>
-  )
-  // magazine
-  return (
-    <div style={{ background: '#f8f8f5' }}>
-      <div className="flex items-center justify-between px-5 py-3" style={{ borderBottom: '1px solid rgba(0,0,0,0.05)' }}><span className="text-xs font-black text-black" style={{ fontFamily: 'Georgia, serif' }}>Mon Business</span><div className="flex gap-3 text-[9px] text-black/25"><span>Services</span><span>Journal</span></div><div className="px-3 py-1 rounded-full text-[8px] font-bold text-white bg-rose-500">Contact</div></div>
-      <div className="relative h-56 overflow-hidden"><img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=900&q=70" alt="" className="w-full h-full object-cover" /><div className="absolute bottom-0 inset-x-0 p-5 bg-gradient-to-t from-black/70 to-transparent"><div className="text-[8px] text-rose-300 uppercase tracking-widest mb-1">À la une</div><div className="text-xl font-black text-white leading-tight" style={{ fontFamily: 'Georgia, serif' }}>L'art de transformer<br/>votre quotidien</div></div></div>
-      <div className="px-5 py-4 flex gap-4"><div className="flex-1"><div className="text-[9px] font-bold text-black mb-1" style={{ fontFamily: 'Georgia, serif' }}>Notre philosophie</div><div className="text-[7px] text-black/30 leading-relaxed">Une approche unique qui combine expertise et créativité pour des résultats exceptionnels.</div></div><div className="flex-1"><div className="text-[9px] font-bold text-black mb-1" style={{ fontFamily: 'Georgia, serif' }}>Nos valeurs</div><div className="text-[7px] text-black/30 leading-relaxed">Excellence, innovation et attention aux détails sont au cœur de notre démarche.</div></div></div>
-      <div className="grid grid-cols-3 gap-2 px-5 pb-4">{['Expertise', 'Créativité', 'Résultat'].map((s, i) => <div key={i} className="p-3 rounded-xl bg-white border border-black/[0.04] text-center"><div className="text-lg mb-1">{'🏆✨🎯'[i]}</div><div className="text-[8px] font-bold text-black" style={{ fontFamily: 'Georgia, serif' }}>{s}</div></div>)}</div>
-    </div>
-  )
-}
 
 function EditorDemo() {
   const [phase, setPhase] = useState(0)
   const [typing, setTyping] = useState('')
-  const [applied, setApplied] = useState(false)
   const [visibleSteps, setVisibleSteps] = useState(0)
   const [sent, setSent] = useState(false)
   const [transforming, setTransforming] = useState(false)
-  const demo = DEMOS[phase]
-  const prevLayout = DEMOS[(phase + DEMOS.length - 1) % DEMOS.length].layout
-  const currentLayout = applied ? demo.layout : prevLayout
+  const [accentColor, setAccentColor] = useState('#f97316')
+  const [showGallery, setShowGallery] = useState(false)
+  const [showTestimonials, setShowTestimonials] = useState(false)
+  const [splitHero, setSplitHero] = useState(false)
+  const siteRef = useRef(null)
+  const cmd = CMDS[phase]
 
   useEffect(() => {
     let c = false
     const w = (ms) => new Promise(r => setTimeout(r, ms))
     const run = async () => {
-      setApplied(false); setTyping(''); setSent(false); setVisibleSteps(0); setTransforming(false)
-      await w(1000)
-      for (let i = 0; i <= demo.cmd.length; i++) { if (c) return; setTyping(demo.cmd.slice(0, i)); await w(30) }
+      setTyping(''); setSent(false); setVisibleSteps(0); setTransforming(false)
+      await w(1200)
+      for (let i = 0; i <= cmd.cmd.length; i++) { if (c) return; setTyping(cmd.cmd.slice(0, i)); await w(30) }
       await w(400); if (c) return; setSent(true)
-      for (let i = 1; i <= demo.steps.length; i++) { await w(500); if (c) return; setVisibleSteps(i) }
-      await w(200); if (c) return
-      setTransforming(true); await w(400); if (c) return
-      setApplied(true); await w(500); if (c) return
-      setTransforming(false); await w(3500); if (c) return
-      setPhase(p => (p + 1) % DEMOS.length)
+      for (let i = 1; i <= cmd.steps.length; i++) { await w(500); if (c) return; setVisibleSteps(i) }
+      await w(300); if (c) return; setTransforming(true)
+      await w(400); if (c) return
+      // Apply the actual change
+      if (cmd.color) setAccentColor(cmd.color)
+      if (cmd.showGallery) setShowGallery(true)
+      if (cmd.showTestimonials) setShowTestimonials(true)
+      if (cmd.splitHero) setSplitHero(true)
+      await w(300); if (c) return; setTransforming(false)
+      // Scroll to new content
+      if (cmd.showGallery || cmd.showTestimonials) {
+        await w(200)
+        siteRef.current?.scrollTo({ top: siteRef.current.scrollHeight, behavior: 'smooth' })
+      }
+      await w(3500); if (c) return
+      setPhase(p => (p + 1) % CMDS.length)
     }
     run(); return () => { c = true }
   }, [phase])
+
+  const ac = accentColor
 
   return (
     <section className="relative z-10 max-w-5xl mx-auto px-6 py-20">
       <div className="text-center mb-12">
         <p className="text-[12px] font-semibold uppercase tracking-widest text-accent mb-3">Éditeur IA</p>
         <h2 className="text-3xl md:text-4xl font-black tracking-tight mb-4">Modifiez tout. En temps réel.</h2>
-        <p className="text-sm text-black/35 max-w-md mx-auto">Layout, couleurs, sections, images — décrivez et regardez.</p>
+        <p className="text-sm text-black/35 max-w-md mx-auto">Chaque commande modifie le même site. Couleurs, sections, layout.</p>
       </div>
 
       <div className="relative">
-        {/* Site preview with 3D */}
-        <div className="rounded-2xl overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.12)] border border-black/[0.06]" style={{ transform: transforming ? 'perspective(1200px) rotateY(-4deg) rotateX(2deg) scale(0.96)' : 'perspective(1200px) rotateY(0) rotateX(0) scale(1)', transition: 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)' }}>
+        <div className="rounded-2xl overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.12)] border border-black/[0.06]" style={{ transform: transforming ? 'perspective(1200px) rotateY(-3deg) scale(0.97)' : 'perspective(1200px) rotateY(0) scale(1)', transition: 'transform 0.5s cubic-bezier(0.23,1,0.32,1)' }}>
+          {/* Chrome */}
           <div className="flex items-center gap-2 px-4 py-2.5 bg-[#fafafa] border-b border-black/[0.06]">
             <div className="flex gap-1.5"><div className="w-3 h-3 rounded-full bg-[#ff5f57]" /><div className="w-3 h-3 rounded-full bg-[#febc2e]" /><div className="w-3 h-3 rounded-full bg-[#28c840]" /></div>
             <div className="flex-1 mx-8"><div className="bg-white rounded-lg px-4 py-1.5 text-[11px] text-black/25 text-center font-mono border border-black/[0.04]">mon-business.novaos.io</div></div>
           </div>
-          <div style={{ opacity: transforming ? 0.7 : 1, filter: transforming ? 'blur(1px)' : 'none', transition: 'all 0.4s' }}>
-            <SiteLayout layout={currentLayout} transforming={transforming} />
+
+          {/* THE SITE — one site that accumulates changes */}
+          <div ref={siteRef} className="bg-white overflow-y-auto" style={{ maxHeight: '480px', opacity: transforming ? 0.8 : 1, transition: 'opacity 0.3s' }}>
+            {/* Nav */}
+            <div className="flex items-center justify-between px-6 py-3 border-b border-black/[0.04]">
+              <span className="text-xs font-black text-black">Mon Business</span>
+              <div className="flex gap-4 text-[9px] text-black/25"><span>Services</span>{showGallery && <span style={{ color: ac, transition: 'color 0.4s' }}>Galerie</span>}<span>Contact</span></div>
+              <div className="px-3.5 py-1.5 rounded-full text-[8px] font-bold text-white" style={{ background: ac, transition: 'background 0.4s' }}>Réserver</div>
+            </div>
+
+            {/* Hero — switches between centered and split */}
+            {splitHero ? (
+              <div className="flex gap-5 p-6 items-center" style={{ transition: 'all 0.5s' }}>
+                <div className="flex-1">
+                  <div className="text-[9px] uppercase tracking-widest mb-2" style={{ color: ac, transition: 'color 0.4s' }}>Bienvenue</div>
+                  <div className="text-xl font-black text-black leading-tight mb-2">Votre business<br/>mérite le meilleur</div>
+                  <div className="text-[9px] text-black/30 mb-4">Description professionnelle de votre activité générée par Nova.</div>
+                  <div className="flex gap-2">
+                    <div className="px-4 py-2 rounded-full text-[8px] font-bold text-white" style={{ background: ac, transition: 'background 0.4s' }}>Commencer</div>
+                    <div className="px-4 py-2 rounded-full text-[8px] font-bold text-black/30 border border-black/10">En savoir +</div>
+                  </div>
+                </div>
+                <div className="w-[42%] h-44 rounded-2xl overflow-hidden shrink-0"><img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=500&q=70" alt="" className="w-full h-full object-cover" /></div>
+              </div>
+            ) : (
+              <div className="relative h-48 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=900&q=70" alt="" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="text-[9px] uppercase tracking-widest mb-2 text-white/50">Bienvenue</div>
+                    <div className="text-xl font-black text-white mb-2">Votre titre accrocheur</div>
+                    <div className="text-[9px] text-white/50 mb-4">Sous-titre généré par Nova</div>
+                    <div className="inline-block px-5 py-2 rounded-full text-[8px] font-bold text-white" style={{ background: ac, transition: 'background 0.4s' }}>Découvrir</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Stats */}
+            <div className="flex justify-around py-3 mx-5 my-4 rounded-xl" style={{ background: `${ac}08`, border: `1px solid ${ac}15`, transition: 'all 0.4s' }}>
+              {[{ n: '15+', l: 'Années' }, { n: '500+', l: 'Clients' }, { n: '4.9/5', l: 'Google' }].map(s => (
+                <div key={s.n} className="text-center"><div className="text-sm font-black" style={{ color: ac, transition: 'color 0.4s' }}>{s.n}</div><div className="text-[7px] text-black/25">{s.l}</div></div>
+              ))}
+            </div>
+
+            {/* Services */}
+            <div className="px-5 mb-4">
+              <div className="text-[9px] uppercase tracking-widest mb-2" style={{ color: ac, transition: 'color 0.4s' }}>Services</div>
+              <div className="grid grid-cols-3 gap-2">
+                {[{ e: '💡', s: 'Consulting', p: '150 CHF' }, { e: '📚', s: 'Formation', p: '200 CHF' }, { e: '🎯', s: 'Coaching', p: '120 CHF' }].map((s, i) => (
+                  <div key={i} className="p-3 rounded-xl border border-black/[0.04]">
+                    <span className="text-base block mb-1.5">{s.e}</span>
+                    <div className="text-[9px] font-bold text-black mb-0.5">{s.s}</div>
+                    <div className="text-[7px] text-black/25 mb-1.5">Service professionnel</div>
+                    <div className="text-[8px] font-bold" style={{ color: ac, transition: 'color 0.4s' }}>Dès {s.p}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Gallery — appears when added */}
+            {showGallery && (
+              <div className="px-5 mb-4 animate-[fade-in_0.5s_ease]">
+                <div className="text-[9px] uppercase tracking-widest mb-2" style={{ color: ac }}>Galerie</div>
+                <div className="grid grid-cols-4 gap-1.5">
+                  {['photo-1497366216548-37526070297c', 'photo-1497366811353-6870744d04b2', 'photo-1552664730-d307ca884978', 'photo-1573497019940-1c28c88b4f3e', 'photo-1507003211169-0a1dd7228f2d', 'photo-1460925895917-afdab827c52f'].map((id, i) => (
+                    <div key={i} className="h-14 rounded-lg overflow-hidden"><img src={`https://images.unsplash.com/${id}?w=200&q=60`} alt="" className="w-full h-full object-cover" /></div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Testimonials — appears when added */}
+            {showTestimonials && (
+              <div className="px-5 mb-4 animate-[fade-in_0.5s_ease]">
+                <div className="text-[9px] uppercase tracking-widest mb-2" style={{ color: ac }}>Avis clients</div>
+                <div className="grid grid-cols-3 gap-2">
+                  {[{ t: 'Service excellent, très professionnel !', n: 'Marie L.' }, { t: 'Je recommande vivement.', n: 'Pierre D.' }, { t: 'Résultat au-delà de mes attentes.', n: 'Sophie R.' }].map((r, i) => (
+                    <div key={i} className="p-3 rounded-xl border border-black/[0.04] bg-black/[0.01]">
+                      <div className="flex gap-0.5 mb-1.5">{[...Array(5)].map((_, j) => <span key={j} className="text-[7px] text-amber-400">★</span>)}</div>
+                      <div className="text-[8px] text-black/35 italic mb-1.5">"{r.t}"</div>
+                      <div className="text-[8px] font-bold text-black">{r.n}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Footer */}
+            <div className="px-5 py-3 border-t border-black/[0.04] flex justify-between">
+              <span className="text-[8px] text-black/20">© Mon Business 2024</span>
+              <span className="text-[8px] text-black/15">Propulsé par Nova OS</span>
+            </div>
           </div>
         </div>
 
         {/* Glassy AI bubble */}
         <div className="absolute -bottom-8 right-4 md:right-8 w-[260px] md:w-[300px] z-10">
-          <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(24px)', border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 16px 56px rgba(0,0,0,0.14)' }}>
+          <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.72)', backdropFilter: 'blur(24px)', border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 16px 56px rgba(0,0,0,0.14)' }}>
             <div className="flex items-center justify-between px-4 py-2.5 border-b border-black/[0.06]">
               <div className="flex items-center gap-2"><div className="w-5 h-5 rounded-lg bg-accent/15 flex items-center justify-center text-[10px]">✨</div><span className="text-[11px] font-bold text-black">Nova AI</span></div>
               <div className="w-4 h-4 rounded-full bg-black/[0.04] flex items-center justify-center text-[7px] text-black/20">×</div>
@@ -111,12 +172,12 @@ function EditorDemo() {
             <div className="px-4 py-3 flex flex-col gap-2 min-h-[130px] justify-end">
               {sent && (
                 <>
-                  <div className="self-end"><div className="px-3 py-2 rounded-2xl rounded-br-sm bg-accent/10 text-[10px] text-black/50 max-w-[220px]">{demo.cmd}</div></div>
+                  <div className="self-end"><div className="px-3 py-2 rounded-2xl rounded-br-sm bg-accent/10 text-[10px] text-black/50 max-w-[220px]">{cmd.cmd}</div></div>
                   <div className="flex flex-col gap-1.5 mt-1">
-                    {demo.steps.map((s, i) => i < visibleSteps && (
+                    {cmd.steps.map((s, i) => i < visibleSteps && (
                       <div key={i} className="flex items-center gap-1.5 text-[10px]">
-                        {i < visibleSteps - 1 || applied ? <span className="text-accent">✓</span> : <span className="w-2.5 h-2.5 border-[1.5px] border-accent/30 border-t-accent rounded-full animate-spin shrink-0" />}
-                        <span className={i < visibleSteps - 1 || applied ? 'text-black/30' : 'text-black/50'}>{s}</span>
+                        {i < visibleSteps - 1 || visibleSteps === cmd.steps.length ? <span className="text-accent">✓</span> : <span className="w-2.5 h-2.5 border-[1.5px] border-accent/30 border-t-accent rounded-full animate-spin shrink-0" />}
+                        <span className={i < visibleSteps - 1 || visibleSteps === cmd.steps.length ? 'text-black/30' : 'text-black/50'}>{s}</span>
                       </div>
                     ))}
                   </div>
@@ -126,7 +187,7 @@ function EditorDemo() {
             <div className="px-3 pb-3">
               <div className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-black/[0.06] bg-white/60">
                 <div className="flex-1 text-[10px] min-h-[14px]">
-                  {!sent ? (<><span className="text-black/50">{typing}</span>{typing && typing.length < demo.cmd.length && <span className="inline-block w-[1px] h-[10px] bg-accent ml-0.5 align-middle animate-pulse" />}{!typing && <span className="text-black/20">Ask me anything...</span>}</>) : <span className="text-black/20">Ask me anything...</span>}
+                  {!sent ? (<><span className="text-black/50">{typing}</span>{typing && typing.length < cmd.cmd.length && <span className="inline-block w-[1px] h-[10px] bg-accent ml-0.5 align-middle animate-pulse" />}{!typing && <span className="text-black/20">Ask me anything...</span>}</>) : <span className="text-black/20">Ask me anything...</span>}
                 </div>
                 <div className="w-5 h-5 rounded-full bg-accent flex items-center justify-center text-white text-[8px]">↑</div>
               </div>
@@ -136,7 +197,7 @@ function EditorDemo() {
       </div>
 
       <div className="mt-14 text-center">
-        <p className="text-[11px] text-black/20">Layout · Couleurs · Textes · Images · Polices · Sections — tout se change en une phrase</p>
+        <p className="text-[11px] text-black/20">Chaque commande modifie le même site — couleurs, sections, layout, images</p>
       </div>
     </section>
   )
