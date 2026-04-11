@@ -2,10 +2,10 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 const CMDS = [
-  { cmd: 'Change la couleur accent en violet', steps: ['Identification des éléments', 'Application de la teinte', 'Harmonisation globale'], color: '#7c3aed' },
-  { cmd: 'Ajoute une section galerie photos', steps: ['Sélection des images', 'Création de la grille', 'Animation au scroll'], showGallery: true },
-  { cmd: 'Ajoute des témoignages clients', steps: ['Génération des avis', 'Design des cartes', 'Placement dans le flow'], showTestimonials: true },
-  { cmd: 'Passe le hero en split layout', steps: ['Réorganisation du contenu', 'Image à droite', 'Texte à gauche'], splitHero: true },
+  { cmd: 'Change la couleur accent en violet', steps: ['Scan des éléments accent', 'Application de la teinte', 'Harmonisation globale'], do: 'color' },
+  { cmd: 'Ajoute une galerie photos', steps: ['Sélection des images', 'Construction de la grille', 'Intégration dans la page'], do: 'gallery' },
+  { cmd: 'Ajoute des témoignages clients', steps: ['Génération des avis', 'Design des cartes', 'Placement sous la galerie'], do: 'testimonials' },
+  { cmd: 'Passe le hero en split layout', steps: ['Réorganisation du contenu', 'Image à droite', 'Alignement du texte'], do: 'split' },
 ]
 
 function EditorDemo() {
@@ -13,11 +13,17 @@ function EditorDemo() {
   const [typing, setTyping] = useState('')
   const [visibleSteps, setVisibleSteps] = useState(0)
   const [sent, setSent] = useState(false)
-  const [transforming, setTransforming] = useState(false)
-  const [accentColor, setAccentColor] = useState('#f97316')
-  const [showGallery, setShowGallery] = useState(false)
-  const [showTestimonials, setShowTestimonials] = useState(false)
-  const [splitHero, setSplitHero] = useState(false)
+
+  // Site state — elements change one by one
+  const [ac, setAc] = useState('#f97316')
+  const [navColor, setNavColor] = useState(false)
+  const [statsColor, setStatsColor] = useState(false)
+  const [cardsColor, setCardsColor] = useState(false)
+  const [gallery, setGallery] = useState(0) // 0-6 images revealed
+  const [testimonials, setTestimonials] = useState(0) // 0-3 cards
+  const [split, setSplit] = useState(false)
+  const [heroTransition, setHeroTransition] = useState(false)
+
   const siteRef = useRef(null)
   const cmd = CMDS[phase]
 
@@ -25,126 +31,154 @@ function EditorDemo() {
     let c = false
     const w = (ms) => new Promise(r => setTimeout(r, ms))
     const run = async () => {
-      setTyping(''); setSent(false); setVisibleSteps(0); setTransforming(false)
+      setTyping(''); setSent(false); setVisibleSteps(0)
       await w(1200)
-      for (let i = 0; i <= cmd.cmd.length; i++) { if (c) return; setTyping(cmd.cmd.slice(0, i)); await w(30) }
+      // Type
+      for (let i = 0; i <= cmd.cmd.length; i++) { if (c) return; setTyping(cmd.cmd.slice(0, i)); await w(28) }
       await w(400); if (c) return; setSent(true)
-      for (let i = 1; i <= cmd.steps.length; i++) { await w(500); if (c) return; setVisibleSteps(i) }
-      await w(300); if (c) return; setTransforming(true)
-      await w(400); if (c) return
-      // Apply the actual change
-      if (cmd.color) setAccentColor(cmd.color)
-      if (cmd.showGallery) setShowGallery(true)
-      if (cmd.showTestimonials) setShowTestimonials(true)
-      if (cmd.splitHero) setSplitHero(true)
-      await w(300); if (c) return; setTransforming(false)
-      // Scroll to new content
-      if (cmd.showGallery || cmd.showTestimonials) {
-        await w(200)
-        siteRef.current?.scrollTo({ top: siteRef.current.scrollHeight, behavior: 'smooth' })
+
+      // Steps + sequential changes
+      if (cmd.do === 'color') {
+        setVisibleSteps(1); await w(500); if (c) return
+        setNavColor(true); setAc('#7c3aed'); await w(300); if (c) return
+        setVisibleSteps(2); await w(400); if (c) return
+        setStatsColor(true); await w(300); if (c) return
+        setCardsColor(true); await w(300); if (c) return
+        setVisibleSteps(3)
       }
+      if (cmd.do === 'gallery') {
+        setVisibleSteps(1); await w(500); if (c) return
+        // Reveal images one by one
+        for (let i = 1; i <= 6; i++) { if (c) return; setGallery(i); await w(150) }
+        setVisibleSteps(2); await w(400); if (c) return
+        siteRef.current?.scrollTo({ top: siteRef.current.scrollHeight, behavior: 'smooth' })
+        await w(300); setVisibleSteps(3)
+      }
+      if (cmd.do === 'testimonials') {
+        setVisibleSteps(1); await w(500); if (c) return
+        for (let i = 1; i <= 3; i++) { if (c) return; setTestimonials(i); await w(400) }
+        setVisibleSteps(2); await w(300); if (c) return
+        siteRef.current?.scrollTo({ top: siteRef.current.scrollHeight, behavior: 'smooth' })
+        await w(300); setVisibleSteps(3)
+      }
+      if (cmd.do === 'split') {
+        setVisibleSteps(1); await w(500); if (c) return
+        setHeroTransition(true); await w(400); if (c) return
+        setVisibleSteps(2); await w(300); if (c) return
+        setSplit(true); setHeroTransition(false); await w(300); if (c) return
+        setVisibleSteps(3)
+      }
+
       await w(3500); if (c) return
       setPhase(p => (p + 1) % CMDS.length)
     }
     run(); return () => { c = true }
   }, [phase])
 
-  const ac = accentColor
+  const currentAc = navColor ? ac : '#f97316'
 
   return (
     <section className="relative z-10 max-w-5xl mx-auto px-6 py-20">
       <div className="text-center mb-12">
         <p className="text-[12px] font-semibold uppercase tracking-widest text-accent mb-3">Éditeur IA</p>
         <h2 className="text-3xl md:text-4xl font-black tracking-tight mb-4">Modifiez tout. En temps réel.</h2>
-        <p className="text-sm text-black/35 max-w-md mx-auto">Chaque commande modifie le même site. Couleurs, sections, layout.</p>
+        <p className="text-sm text-black/35 max-w-md mx-auto">Regardez chaque élément changer un par un.</p>
       </div>
 
       <div className="relative">
-        <div className="rounded-2xl overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.12)] border border-black/[0.06]" style={{ transform: transforming ? 'perspective(1200px) rotateY(-3deg) scale(0.97)' : 'perspective(1200px) rotateY(0) scale(1)', transition: 'transform 0.5s cubic-bezier(0.23,1,0.32,1)' }}>
+        <div className="rounded-2xl overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.12)] border border-black/[0.06]">
           {/* Chrome */}
           <div className="flex items-center gap-2 px-4 py-2.5 bg-[#fafafa] border-b border-black/[0.06]">
             <div className="flex gap-1.5"><div className="w-3 h-3 rounded-full bg-[#ff5f57]" /><div className="w-3 h-3 rounded-full bg-[#febc2e]" /><div className="w-3 h-3 rounded-full bg-[#28c840]" /></div>
             <div className="flex-1 mx-8"><div className="bg-white rounded-lg px-4 py-1.5 text-[11px] text-black/25 text-center font-mono border border-black/[0.04]">mon-business.novaos.io</div></div>
           </div>
 
-          {/* THE SITE — one site that accumulates changes */}
-          <div ref={siteRef} className="bg-white overflow-y-auto" style={{ maxHeight: '480px', opacity: transforming ? 0.8 : 1, transition: 'opacity 0.3s' }}>
+          {/* Site */}
+          <div ref={siteRef} className="bg-white overflow-y-auto scroll-smooth" style={{ maxHeight: '480px' }}>
             {/* Nav */}
             <div className="flex items-center justify-between px-6 py-3 border-b border-black/[0.04]">
               <span className="text-xs font-black text-black">Mon Business</span>
-              <div className="flex gap-4 text-[9px] text-black/25"><span>Services</span>{showGallery && <span style={{ color: ac, transition: 'color 0.4s' }}>Galerie</span>}<span>Contact</span></div>
-              <div className="px-3.5 py-1.5 rounded-full text-[8px] font-bold text-white" style={{ background: ac, transition: 'background 0.4s' }}>Réserver</div>
+              <div className="flex gap-4 text-[9px] text-black/25">
+                <span>Services</span>
+                {gallery > 0 && <span className="transition-colors duration-500" style={{ color: currentAc }}>Galerie</span>}
+                <span>Contact</span>
+              </div>
+              <div className="px-3.5 py-1.5 rounded-full text-[8px] font-bold text-white transition-colors duration-700" style={{ background: navColor ? ac : '#f97316' }}>Réserver</div>
             </div>
 
-            {/* Hero — switches between centered and split */}
-            {splitHero ? (
-              <div className="flex gap-5 p-6 items-center" style={{ transition: 'all 0.5s' }}>
-                <div className="flex-1">
-                  <div className="text-[9px] uppercase tracking-widest mb-2" style={{ color: ac, transition: 'color 0.4s' }}>Bienvenue</div>
-                  <div className="text-xl font-black text-black leading-tight mb-2">Votre business<br/>mérite le meilleur</div>
-                  <div className="text-[9px] text-black/30 mb-4">Description professionnelle de votre activité générée par Nova.</div>
-                  <div className="flex gap-2">
-                    <div className="px-4 py-2 rounded-full text-[8px] font-bold text-white" style={{ background: ac, transition: 'background 0.4s' }}>Commencer</div>
-                    <div className="px-4 py-2 rounded-full text-[8px] font-bold text-black/30 border border-black/10">En savoir +</div>
+            {/* Hero */}
+            <div style={{ opacity: heroTransition ? 0.5 : 1, transform: heroTransition ? 'scale(0.98)' : 'scale(1)', transition: 'all 0.4s' }}>
+              {split ? (
+                <div className="flex gap-5 p-6 items-center">
+                  <div className="flex-1">
+                    <div className="text-[9px] uppercase tracking-widest mb-2 transition-colors duration-700" style={{ color: currentAc }}>Bienvenue</div>
+                    <div className="text-xl font-black text-black leading-tight mb-2">Votre business<br/>mérite le meilleur</div>
+                    <div className="text-[9px] text-black/30 mb-4">Description professionnelle générée par Nova.</div>
+                    <div className="flex gap-2">
+                      <div className="px-4 py-2 rounded-full text-[8px] font-bold text-white transition-colors duration-700" style={{ background: currentAc }}>Commencer</div>
+                      <div className="px-4 py-2 rounded-full text-[8px] font-bold text-black/30 border border-black/10">En savoir +</div>
+                    </div>
+                  </div>
+                  <div className="w-[42%] h-44 rounded-2xl overflow-hidden shrink-0"><img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=500&q=70" alt="" className="w-full h-full object-cover" /></div>
+                </div>
+              ) : (
+                <div className="relative h-48 overflow-hidden">
+                  <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=900&q=70" alt="" className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="text-[9px] uppercase tracking-widest mb-2 text-white/50">Bienvenue</div>
+                      <div className="text-xl font-black text-white mb-2">Votre titre accrocheur</div>
+                      <div className="text-[9px] text-white/50 mb-4">Sous-titre généré par Nova</div>
+                      <div className="inline-block px-5 py-2 rounded-full text-[8px] font-bold text-white transition-colors duration-700" style={{ background: currentAc }}>Découvrir</div>
+                    </div>
                   </div>
                 </div>
-                <div className="w-[42%] h-44 rounded-2xl overflow-hidden shrink-0"><img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=500&q=70" alt="" className="w-full h-full object-cover" /></div>
-              </div>
-            ) : (
-              <div className="relative h-48 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=900&q=70" alt="" className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="text-[9px] uppercase tracking-widest mb-2 text-white/50">Bienvenue</div>
-                    <div className="text-xl font-black text-white mb-2">Votre titre accrocheur</div>
-                    <div className="text-[9px] text-white/50 mb-4">Sous-titre généré par Nova</div>
-                    <div className="inline-block px-5 py-2 rounded-full text-[8px] font-bold text-white" style={{ background: ac, transition: 'background 0.4s' }}>Découvrir</div>
-                  </div>
-                </div>
-              </div>
-            )}
+              )}
+            </div>
 
             {/* Stats */}
-            <div className="flex justify-around py-3 mx-5 my-4 rounded-xl" style={{ background: `${ac}08`, border: `1px solid ${ac}15`, transition: 'all 0.4s' }}>
+            <div className="flex justify-around py-3 mx-5 my-4 rounded-xl transition-all duration-700" style={{ background: statsColor ? `${ac}08` : '#f973160a', border: `1px solid ${statsColor ? ac + '15' : '#f9731615'}` }}>
               {[{ n: '15+', l: 'Années' }, { n: '500+', l: 'Clients' }, { n: '4.9/5', l: 'Google' }].map(s => (
-                <div key={s.n} className="text-center"><div className="text-sm font-black" style={{ color: ac, transition: 'color 0.4s' }}>{s.n}</div><div className="text-[7px] text-black/25">{s.l}</div></div>
+                <div key={s.n} className="text-center"><div className="text-sm font-black transition-colors duration-700" style={{ color: statsColor ? ac : '#f97316' }}>{s.n}</div><div className="text-[7px] text-black/25">{s.l}</div></div>
               ))}
             </div>
 
             {/* Services */}
             <div className="px-5 mb-4">
-              <div className="text-[9px] uppercase tracking-widest mb-2" style={{ color: ac, transition: 'color 0.4s' }}>Services</div>
+              <div className="text-[9px] uppercase tracking-widest mb-2 transition-colors duration-700" style={{ color: currentAc }}>Services</div>
               <div className="grid grid-cols-3 gap-2">
                 {[{ e: '💡', s: 'Consulting', p: '150 CHF' }, { e: '📚', s: 'Formation', p: '200 CHF' }, { e: '🎯', s: 'Coaching', p: '120 CHF' }].map((s, i) => (
                   <div key={i} className="p-3 rounded-xl border border-black/[0.04]">
                     <span className="text-base block mb-1.5">{s.e}</span>
                     <div className="text-[9px] font-bold text-black mb-0.5">{s.s}</div>
                     <div className="text-[7px] text-black/25 mb-1.5">Service professionnel</div>
-                    <div className="text-[8px] font-bold" style={{ color: ac, transition: 'color 0.4s' }}>Dès {s.p}</div>
+                    <div className="text-[8px] font-bold transition-colors duration-700" style={{ color: cardsColor ? ac : '#f97316' }}>Dès {s.p}</div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Gallery — appears when added */}
-            {showGallery && (
-              <div className="px-5 mb-4 animate-[fade-in_0.5s_ease]">
-                <div className="text-[9px] uppercase tracking-widest mb-2" style={{ color: ac }}>Galerie</div>
+            {/* Gallery — images appear one by one */}
+            {gallery > 0 && (
+              <div className="px-5 mb-4">
+                <div className="text-[9px] uppercase tracking-widest mb-2" style={{ color: currentAc }}>Galerie</div>
                 <div className="grid grid-cols-4 gap-1.5">
                   {['photo-1497366216548-37526070297c', 'photo-1497366811353-6870744d04b2', 'photo-1552664730-d307ca884978', 'photo-1573497019940-1c28c88b4f3e', 'photo-1507003211169-0a1dd7228f2d', 'photo-1460925895917-afdab827c52f'].map((id, i) => (
-                    <div key={i} className="h-14 rounded-lg overflow-hidden"><img src={`https://images.unsplash.com/${id}?w=200&q=60`} alt="" className="w-full h-full object-cover" /></div>
+                    <div key={i} className="h-14 rounded-lg overflow-hidden" style={{ opacity: i < gallery ? 1 : 0, transform: i < gallery ? 'scale(1)' : 'scale(0.8)', transition: 'all 0.4s ease' }}>
+                      <img src={`https://images.unsplash.com/${id}?w=200&q=60`} alt="" className="w-full h-full object-cover" />
+                    </div>
                   ))}
                 </div>
               </div>
             )}
 
-            {/* Testimonials — appears when added */}
-            {showTestimonials && (
-              <div className="px-5 mb-4 animate-[fade-in_0.5s_ease]">
-                <div className="text-[9px] uppercase tracking-widest mb-2" style={{ color: ac }}>Avis clients</div>
+            {/* Testimonials — cards appear one by one */}
+            {testimonials > 0 && (
+              <div className="px-5 mb-4">
+                <div className="text-[9px] uppercase tracking-widest mb-2" style={{ color: currentAc }}>Avis clients</div>
                 <div className="grid grid-cols-3 gap-2">
                   {[{ t: 'Service excellent, très professionnel !', n: 'Marie L.' }, { t: 'Je recommande vivement.', n: 'Pierre D.' }, { t: 'Résultat au-delà de mes attentes.', n: 'Sophie R.' }].map((r, i) => (
-                    <div key={i} className="p-3 rounded-xl border border-black/[0.04] bg-black/[0.01]">
+                    <div key={i} className="p-3 rounded-xl border border-black/[0.04] bg-black/[0.01]" style={{ opacity: i < testimonials ? 1 : 0, transform: i < testimonials ? 'translateY(0)' : 'translateY(12px)', transition: 'all 0.5s ease' }}>
                       <div className="flex gap-0.5 mb-1.5">{[...Array(5)].map((_, j) => <span key={j} className="text-[7px] text-amber-400">★</span>)}</div>
                       <div className="text-[8px] text-black/35 italic mb-1.5">"{r.t}"</div>
                       <div className="text-[8px] font-bold text-black">{r.n}</div>
@@ -154,7 +188,6 @@ function EditorDemo() {
               </div>
             )}
 
-            {/* Footer */}
             <div className="px-5 py-3 border-t border-black/[0.04] flex justify-between">
               <span className="text-[8px] text-black/20">© Mon Business 2024</span>
               <span className="text-[8px] text-black/15">Propulsé par Nova OS</span>
@@ -197,7 +230,7 @@ function EditorDemo() {
       </div>
 
       <div className="mt-14 text-center">
-        <p className="text-[11px] text-black/20">Chaque commande modifie le même site — couleurs, sections, layout, images</p>
+        <p className="text-[11px] text-black/20">Chaque élément change un par un — en temps réel sous vos yeux</p>
       </div>
     </section>
   )
