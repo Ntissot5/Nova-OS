@@ -168,33 +168,91 @@ function Wizard({ business, onComplete }) {
             <div className="text-center mb-8">
               <span className="text-3xl mb-3 block">🎨</span>
               <h1 className="text-2xl md:text-3xl font-black tracking-tight text-black mb-2">Choisissez votre style</h1>
-              <p className="text-sm text-black/35">Sélectionnez le design qui correspond le mieux à votre image.</p>
+              <p className="text-sm text-black/35">Chaque design est unique et professionnel. Cliquez pour sélectionner.</p>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {TEMPLATES.map(t => (
-                <button key={t.id} onClick={() => setTemplate(t.id)} className={`text-left rounded-2xl overflow-hidden border-2 ${template === t.id ? 'border-orange-400 shadow-[0_0_0_1px_rgba(249,115,22,0.3)]' : 'border-transparent hover:border-black/[0.08]'}`}>
-                  {/* Mini preview */}
-                  <div className="h-24 p-3 flex flex-col justify-between" style={{ background: t.bg }}>
-                    <div className="flex items-center justify-between">
-                      <div className="h-1.5 w-12 rounded-full" style={{ background: t.text, opacity: 0.2 }} />
-                      <div className="h-4 w-10 rounded-md" style={{ background: t.accent }} />
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {TEMPLATES.map(t => {
+                const sel = template === t.id
+                const dark = t.id === 'bold'
+                const txtC = dark ? '#fff' : t.text
+                const subC = dark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.25)'
+                const cardC = dark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)'
+                const borderC = dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)'
+                return (
+                  <button key={t.id} onClick={() => setTemplate(t.id)} className={`text-left rounded-2xl overflow-hidden border-2 shadow-sm hover:shadow-md ${sel ? 'border-orange-400 shadow-[0_0_0_2px_rgba(249,115,22,0.2)]' : 'border-black/[0.06] hover:border-black/[0.12]'}`}>
+                    {/* Realistic mini site */}
+                    <div className="relative" style={{ background: t.bg, fontFamily: t.font === 'Playfair' ? 'Georgia, serif' : 'Inter, sans-serif' }}>
+                      {/* Nav */}
+                      <div className="flex items-center justify-between px-3 py-2" style={{ borderBottom: `1px solid ${borderC}` }}>
+                        <span className="text-[7px] font-bold" style={{ color: txtC }}>{name || 'Business'}</span>
+                        <div className="flex gap-2">
+                          <span className="text-[5px]" style={{ color: subC }}>Services</span>
+                          <span className="text-[5px]" style={{ color: subC }}>Contact</span>
+                        </div>
+                        <div className="px-2 py-0.5 rounded-full text-[5px] font-bold text-white" style={{ background: t.accent }}>RDV</div>
+                      </div>
+                      {/* Hero */}
+                      <div className="relative h-20 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&q=60" alt="" className="w-full h-full object-cover" style={{ opacity: dark ? 0.3 : 0.2 }} />
+                        <div className="absolute inset-0 flex flex-col items-start justify-end p-3" style={{ background: dark ? 'linear-gradient(0deg, rgba(10,10,10,0.9), transparent)' : 'linear-gradient(0deg, rgba(255,255,255,0.95), rgba(255,255,255,0.5))' }}>
+                          <div className="text-[9px] font-black leading-tight mb-0.5" style={{ color: txtC }}>Votre titre<br/>accrocheur ici</div>
+                          <div className="text-[5px] mb-1.5" style={{ color: subC }}>Sous-titre descriptif</div>
+                          <div className="px-2 py-0.5 rounded-full text-[5px] font-bold text-white" style={{ background: t.accent }}>Découvrir</div>
+                        </div>
+                      </div>
+                      {/* Stats */}
+                      <div className="flex justify-around py-2" style={{ borderBottom: `1px solid ${borderC}` }}>
+                        {['15+', '500', '4.9'].map(n => (
+                          <div key={n} className="text-center">
+                            <div className="text-[8px] font-black" style={{ color: t.accent }}>{n}</div>
+                            <div className="text-[4px]" style={{ color: subC }}>stat</div>
+                          </div>
+                        ))}
+                      </div>
+                      {/* Services */}
+                      <div className="px-3 py-2">
+                        <div className="text-[5px] font-bold uppercase tracking-widest mb-1" style={{ color: t.accent }}>Services</div>
+                        <div className="flex gap-1.5">
+                          {[1, 2, 3].map(i => (
+                            <div key={i} className="flex-1 p-1.5 rounded-md" style={{ background: cardC, border: `1px solid ${borderC}` }}>
+                              <div className="w-3 h-3 rounded mb-1" style={{ background: t.accent, opacity: 0.2 }} />
+                              <div className="h-1 w-8 rounded-full mb-0.5" style={{ background: txtC, opacity: 0.15 }} />
+                              <div className="h-0.5 w-10 rounded-full" style={{ background: txtC, opacity: 0.07 }} />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      {/* Testimonials hint */}
+                      <div className="px-3 pb-2">
+                        <div className="flex gap-1">
+                          {[1, 2].map(i => (
+                            <div key={i} className="flex-1 p-1.5 rounded-md" style={{ background: cardC, border: `1px solid ${borderC}` }}>
+                              <div className="flex gap-0.5 mb-0.5">{[...Array(5)].map((_, j) => <span key={j} className="text-[4px]" style={{ color: '#f59e0b' }}>★</span>)}</div>
+                              <div className="h-0.5 w-full rounded-full" style={{ background: txtC, opacity: 0.07 }} />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      {/* CTA */}
+                      <div className="mx-3 mb-2 py-2 rounded-lg text-center" style={{ background: `linear-gradient(135deg, ${t.accent}, ${t.accent}cc)` }}>
+                        <span className="text-[6px] font-bold text-white">Prêt à commencer ?</span>
+                      </div>
+                      {/* Footer */}
+                      <div className="px-3 py-1.5" style={{ borderTop: `1px solid ${borderC}` }}>
+                        <div className="text-[4px]" style={{ color: subC }}>© {name || 'Business'} · Nova OS</div>
+                      </div>
                     </div>
-                    <div>
-                      <div className="h-2.5 w-24 rounded-full mb-1.5" style={{ background: t.text, opacity: 0.15 }} />
-                      <div className="h-1.5 w-32 rounded-full" style={{ background: t.text, opacity: 0.07 }} />
+                    {/* Label */}
+                    <div className={`px-3 py-3 flex items-center justify-between ${sel ? 'bg-orange-50' : 'bg-white'}`} style={{ borderTop: '1px solid rgba(0,0,0,0.04)' }}>
+                      <div>
+                        <div className={`text-xs font-bold ${sel ? 'text-orange-600' : 'text-black'}`}>{t.name}</div>
+                        <div className="text-[10px] text-black/30">{t.desc}</div>
+                      </div>
+                      {sel && <div className="w-5 h-5 rounded-full bg-orange-400 flex items-center justify-center text-white text-[10px]">✓</div>}
                     </div>
-                    <div className="flex gap-1.5">
-                      <div className="h-8 flex-1 rounded-md" style={{ background: t.text, opacity: 0.04 }} />
-                      <div className="h-8 flex-1 rounded-md" style={{ background: t.text, opacity: 0.04 }} />
-                      <div className="h-8 flex-1 rounded-md" style={{ background: t.text, opacity: 0.04 }} />
-                    </div>
-                  </div>
-                  <div className="px-3 py-2.5 bg-white border-t border-black/[0.04]">
-                    <div className="text-xs font-semibold text-black">{t.name}</div>
-                    <div className="text-[10px] text-black/30">{t.desc}</div>
-                  </div>
-                </button>
-              ))}
+                  </button>
+                )
+              })}
             </div>
           </div>
         )}
