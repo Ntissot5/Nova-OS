@@ -157,6 +157,84 @@ export default function App() {
         <p className="text-center text-[11px] text-black/20 mt-4">↑ Exemple de site généré par Nova OS en 5 minutes</p>
       </section>
 
+      {/* ━━━ AI EDITOR DEMO ━━━ */}
+      <section className="relative z-10 max-w-5xl mx-auto px-6 py-20">
+        <div className="text-center mb-12">
+          <p className="text-[12px] font-semibold uppercase tracking-widest text-accent mb-3">Éditeur IA en temps réel</p>
+          <h2 className="text-3xl md:text-4xl font-black tracking-tight mb-4">Modifiez tout. En parlant.</h2>
+          <p className="text-sm text-black/40 max-w-lg mx-auto">Tapez ce que vous voulez changer et regardez votre site se transformer instantanément. Couleurs, textes, images, design — tout.</p>
+        </div>
+
+        {/* Editor mockup */}
+        <div className="rounded-2xl overflow-hidden shadow-[0_8px_60px_rgba(0,0,0,0.10)] border border-black/[0.06]">
+          {/* Browser chrome */}
+          <div className="flex items-center gap-2 px-4 py-2.5 bg-[#1a1a1a]">
+            <div className="flex gap-1.5"><div className="w-3 h-3 rounded-full bg-white/10" /><div className="w-3 h-3 rounded-full bg-white/10" /><div className="w-3 h-3 rounded-full bg-white/10" /></div>
+            <div className="flex-1 mx-12"><div className="bg-white/[0.06] rounded-lg px-4 py-1.5 text-[11px] text-white/30 text-center font-mono">votre-site.novaos.io</div></div>
+          </div>
+
+          {/* Site + command bar */}
+          <div className="relative bg-white">
+            {/* Mini site content */}
+            <div className="px-8 py-6">
+              {/* Nav */}
+              <div className="flex items-center justify-between mb-6 pb-3 border-b border-black/[0.04]">
+                <span className="text-sm font-bold text-black">Votre Business</span>
+                <div className="flex gap-5 text-[11px] text-black/30"><span>Services</span><span>Avis</span><span>Contact</span></div>
+                <div className="px-4 py-1.5 rounded-full text-[10px] font-semibold text-white bg-accent">Réserver</div>
+              </div>
+              {/* Hero */}
+              <div className="relative h-40 rounded-xl overflow-hidden mb-6">
+                <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=900&q=80" alt="" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                  <div className="text-center"><div className="text-white text-xl font-bold mb-1">Votre titre accrocheur</div><div className="text-white/60 text-xs">Sous-titre descriptif</div></div>
+                </div>
+              </div>
+              {/* Cards */}
+              <div className="grid grid-cols-3 gap-3 mb-4">
+                {['Service 1', 'Service 2', 'Service 3'].map((s, i) => (
+                  <div key={i} className="p-4 rounded-xl border border-black/[0.04]">
+                    <div className="w-6 h-6 rounded-md mb-2 bg-accent/20" />
+                    <div className="text-[11px] font-semibold text-black mb-0.5">{s}</div>
+                    <div className="text-[9px] text-black/25">Description du service</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Floating command bar — THE FEATURE */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[85%] max-w-[500px]">
+              <div className="rounded-2xl p-1" style={{ background: 'rgba(10,10,15,0.85)', backdropFilter: 'blur(24px)', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 8px 40px rgba(0,0,0,0.3)' }}>
+                <div className="flex items-center gap-2">
+                  <div className="pl-3 text-white/30 text-sm">✨</div>
+                  <div className="flex-1 px-2 py-3 text-[13px] text-white/40 font-medium">Change the background to dark blue...</div>
+                  <div className="px-4 py-2 rounded-xl text-[11px] font-semibold text-black bg-white mr-1">Apply</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Example commands */}
+        <div className="mt-8 text-center">
+          <p className="text-[11px] text-black/25 mb-4">Exemples de modifications possibles :</p>
+          <div className="flex flex-wrap justify-center gap-2">
+            {[
+              'Passe en mode sombre',
+              'Change la couleur en vert',
+              'Ajoute une section galerie',
+              'Change la police en Playfair',
+              'Mets une photo de restaurant',
+              'Rends le design plus luxueux',
+              'Change les prix',
+              'Ajoute des témoignages',
+            ].map(cmd => (
+              <span key={cmd} className="text-[11px] px-3.5 py-2 rounded-full border border-black/[0.06] text-black/30 bg-white">"{cmd}"</span>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ━━━ LOGOS ━━━ */}
       <section className="relative z-10 max-w-3xl mx-auto px-6 pb-16 text-center">
         <p className="text-[11px] text-black/20 uppercase tracking-widest mb-4">Utilisé par des PME en Suisse et en Europe</p>
