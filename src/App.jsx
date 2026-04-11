@@ -1,12 +1,56 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
-const DEMO_STEPS = [
-  { cmd: 'Passe en mode sombre', steps: ['Analyse du design actuel', 'Changement des couleurs', 'Ajustement des contrastes', 'Application du thème sombre'], bg: '#0a0a0a', text: '#fff', accent: '#6c5ce7', cardBg: 'rgba(255,255,255,0.04)', border: 'rgba(255,255,255,0.06)', sub: 'rgba(255,255,255,0.3)', heroBg: 'rgba(108,92,231,0.3)' },
-  { cmd: 'Change la couleur en vert nature', steps: ['Identification de la palette', 'Sélection des teintes vertes', 'Mise à jour des éléments', 'Harmonisation du design'], bg: '#ffffff', text: '#1a3a2a', accent: '#22c55e', cardBg: '#f0fdf4', border: 'rgba(0,0,0,0.05)', sub: 'rgba(0,0,0,0.3)', heroBg: 'rgba(34,197,94,0.2)' },
-  { cmd: 'Rends le design luxueux et doré', steps: ['Analyse du style actuel', 'Application des tons dorés', 'Changement de typographie', 'Ajout de finitions premium'], bg: '#faf9f6', text: '#1a1a1a', accent: '#b8860b', cardBg: '#fffbf0', border: 'rgba(0,0,0,0.06)', sub: 'rgba(0,0,0,0.35)', heroBg: 'rgba(184,134,11,0.2)' },
-  { cmd: 'Style moderne bleu électrique', steps: ['Reconfiguration du layout', 'Application du bleu accent', 'Optimisation des espacements', 'Finalisation du design'], bg: '#ffffff', text: '#0a0a0a', accent: '#3b82f6', cardBg: '#f0f7ff', border: 'rgba(0,0,0,0.05)', sub: 'rgba(0,0,0,0.3)', heroBg: 'rgba(59,130,246,0.2)' },
+const DEMOS = [
+  { cmd: 'Change le hero en split layout', steps: ['Analyse du hero actuel', 'Réorganisation en 2 colonnes', 'Repositionnement de l\'image', 'Finalisation du layout'], layout: 'split' },
+  { cmd: 'Passe en mode sombre luxueux', steps: ['Application du thème sombre', 'Changement de typographie', 'Ajustement des contrastes', 'Ajout de finitions dorées'], layout: 'dark' },
+  { cmd: 'Ajoute une galerie photos', steps: ['Sélection des images', 'Création de la grille', 'Optimisation des tailles', 'Intégration dans le design'], layout: 'gallery' },
+  { cmd: 'Design magazine avec grande image', steps: ['Changement du layout hero', 'Agrandissement de l\'image', 'Style éditorial appliqué', 'Harmonisation complète'], layout: 'magazine' },
 ]
+
+function SiteLayout({ layout, transforming }) {
+  if (layout === 'split') return (
+    <div style={{ background: '#fff' }}>
+      <div className="flex items-center justify-between px-5 py-3" style={{ borderBottom: '1px solid rgba(0,0,0,0.05)' }}><span className="text-xs font-black text-black">Mon Business</span><div className="flex gap-3 text-[9px] text-black/25"><span>Services</span><span>Contact</span></div><div className="px-3 py-1 rounded-full text-[8px] font-bold text-white bg-blue-500">Réserver</div></div>
+      <div className="flex gap-4 p-5">
+        <div className="flex-1 flex flex-col justify-center">
+          <div className="text-[9px] text-blue-500 uppercase tracking-widest mb-2">Bienvenue</div>
+          <div className="text-lg font-black text-black leading-tight mb-2">Votre business<br/>mérite le meilleur</div>
+          <div className="text-[9px] text-black/30 mb-3 max-w-[200px]">Description professionnelle générée par l'IA pour votre activité.</div>
+          <div className="flex gap-2"><div className="px-4 py-1.5 rounded-full text-[8px] font-bold text-white bg-blue-500">Commencer</div><div className="px-4 py-1.5 rounded-full text-[8px] font-bold text-black/40 border border-black/10">En savoir +</div></div>
+        </div>
+        <div className="w-[45%] h-40 rounded-xl overflow-hidden shrink-0"><img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=500&q=70" alt="" className="w-full h-full object-cover" /></div>
+      </div>
+      <div className="flex justify-around py-3 mx-5 rounded-xl bg-blue-50/50 mb-4"><div className="text-center"><div className="text-sm font-black text-blue-500">15+</div><div className="text-[6px] text-black/20">Années</div></div><div className="text-center"><div className="text-sm font-black text-blue-500">500+</div><div className="text-[6px] text-black/20">Clients</div></div><div className="text-center"><div className="text-sm font-black text-blue-500">4.9</div><div className="text-[6px] text-black/20">Google</div></div></div>
+      <div className="grid grid-cols-3 gap-2 px-5 pb-4">{['💡 Consulting', '📚 Formation', '🎯 Coaching'].map((s, i) => <div key={i} className="p-3 rounded-xl bg-blue-50/30 border border-blue-100/50"><div className="text-[9px] font-bold text-black mb-0.5">{s}</div><div className="text-[7px] text-black/25">Description</div></div>)}</div>
+    </div>
+  )
+  if (layout === 'dark') return (
+    <div style={{ background: '#0a0a0a', color: '#fff' }}>
+      <div className="flex items-center justify-between px-5 py-3" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}><span className="text-xs font-black" style={{ fontFamily: 'Georgia, serif' }}>Mon Business</span><div className="flex gap-3 text-[9px] text-white/20"><span>Services</span><span>Contact</span></div><div className="px-3 py-1 rounded-full text-[8px] font-bold text-black bg-amber-400">Réserver</div></div>
+      <div className="relative h-48 overflow-hidden"><img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=70" alt="" className="w-full h-full object-cover opacity-30" /><div className="absolute inset-0 flex items-center justify-center text-center bg-gradient-to-t from-black/80 to-transparent"><div><div className="text-[9px] text-amber-400 uppercase tracking-[0.2em] mb-2">Premium</div><div className="text-xl font-black mb-2" style={{ fontFamily: 'Georgia, serif' }}>L'excellence à votre service</div><div className="text-[9px] text-white/30 mb-3">Une expérience sur mesure</div><div className="inline-block px-5 py-1.5 rounded-full text-[8px] font-bold text-black bg-amber-400">Découvrir</div></div></div></div>
+      <div className="flex justify-around py-3 mx-5 mt-4 rounded-xl" style={{ border: '1px solid rgba(255,255,255,0.06)' }}><div className="text-center"><div className="text-sm font-black text-amber-400">15+</div><div className="text-[6px] text-white/20">Années</div></div><div className="text-center"><div className="text-sm font-black text-amber-400">500+</div><div className="text-[6px] text-white/20">Clients</div></div><div className="text-center"><div className="text-sm font-black text-amber-400">4.9</div><div className="text-[6px] text-white/20">Google</div></div></div>
+      <div className="grid grid-cols-3 gap-2 p-5">{['✦ Consulting', '◆ Formation', '● Coaching'].map((s, i) => <div key={i} className="p-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}><div className="text-[9px] font-bold mb-0.5">{s}</div><div className="text-[7px] text-white/20">Premium service</div></div>)}</div>
+    </div>
+  )
+  if (layout === 'gallery') return (
+    <div style={{ background: '#fff' }}>
+      <div className="flex items-center justify-between px-5 py-3" style={{ borderBottom: '1px solid rgba(0,0,0,0.05)' }}><span className="text-xs font-black text-black">Mon Business</span><div className="flex gap-3 text-[9px] text-black/25"><span>Services</span><span>Galerie</span><span>Contact</span></div><div className="px-3 py-1 rounded-full text-[8px] font-bold text-white bg-violet-500">Réserver</div></div>
+      <div className="relative h-32 overflow-hidden"><img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=70" alt="" className="w-full h-full object-cover" /><div className="absolute inset-0 bg-black/40 flex items-center px-6"><div><div className="text-base font-black text-white mb-1">Notre univers</div><div className="text-[9px] text-white/60">Découvrez nos réalisations</div></div></div></div>
+      <div className="px-5 py-4"><div className="text-[9px] text-violet-500 uppercase tracking-widest mb-2">Galerie</div><div className="grid grid-cols-4 gap-1.5">{[1,2,3,4,5,6,7,8].map(i => <div key={i} className="h-16 rounded-lg overflow-hidden"><img src={`https://images.unsplash.com/photo-149736621654${i}-37526070297c?w=200&q=60`} alt="" className="w-full h-full object-cover" style={{ filter: `hue-rotate(${i*40}deg)` }} /></div>)}</div></div>
+      <div className="grid grid-cols-3 gap-2 px-5 pb-4">{['💡 Service 1', '📚 Service 2', '🎯 Service 3'].map((s, i) => <div key={i} className="p-2.5 rounded-xl bg-violet-50 border border-violet-100"><div className="text-[8px] font-bold text-black">{s}</div></div>)}</div>
+    </div>
+  )
+  // magazine
+  return (
+    <div style={{ background: '#f8f8f5' }}>
+      <div className="flex items-center justify-between px-5 py-3" style={{ borderBottom: '1px solid rgba(0,0,0,0.05)' }}><span className="text-xs font-black text-black" style={{ fontFamily: 'Georgia, serif' }}>Mon Business</span><div className="flex gap-3 text-[9px] text-black/25"><span>Services</span><span>Journal</span></div><div className="px-3 py-1 rounded-full text-[8px] font-bold text-white bg-rose-500">Contact</div></div>
+      <div className="relative h-56 overflow-hidden"><img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=900&q=70" alt="" className="w-full h-full object-cover" /><div className="absolute bottom-0 inset-x-0 p-5 bg-gradient-to-t from-black/70 to-transparent"><div className="text-[8px] text-rose-300 uppercase tracking-widest mb-1">À la une</div><div className="text-xl font-black text-white leading-tight" style={{ fontFamily: 'Georgia, serif' }}>L'art de transformer<br/>votre quotidien</div></div></div>
+      <div className="px-5 py-4 flex gap-4"><div className="flex-1"><div className="text-[9px] font-bold text-black mb-1" style={{ fontFamily: 'Georgia, serif' }}>Notre philosophie</div><div className="text-[7px] text-black/30 leading-relaxed">Une approche unique qui combine expertise et créativité pour des résultats exceptionnels.</div></div><div className="flex-1"><div className="text-[9px] font-bold text-black mb-1" style={{ fontFamily: 'Georgia, serif' }}>Nos valeurs</div><div className="text-[7px] text-black/30 leading-relaxed">Excellence, innovation et attention aux détails sont au cœur de notre démarche.</div></div></div>
+      <div className="grid grid-cols-3 gap-2 px-5 pb-4">{['Expertise', 'Créativité', 'Résultat'].map((s, i) => <div key={i} className="p-3 rounded-xl bg-white border border-black/[0.04] text-center"><div className="text-lg mb-1">{'🏆✨🎯'[i]}</div><div className="text-[8px] font-bold text-black" style={{ fontFamily: 'Georgia, serif' }}>{s}</div></div>)}</div>
+    </div>
+  )
+}
 
 function EditorDemo() {
   const [phase, setPhase] = useState(0)
@@ -15,9 +59,9 @@ function EditorDemo() {
   const [visibleSteps, setVisibleSteps] = useState(0)
   const [sent, setSent] = useState(false)
   const [transforming, setTransforming] = useState(false)
-  const step = DEMO_STEPS[phase]
-  const prevStyle = DEMO_STEPS[(phase + DEMO_STEPS.length - 1) % DEMO_STEPS.length]
-  const current = applied ? step : prevStyle
+  const demo = DEMOS[phase]
+  const prevLayout = DEMOS[(phase + DEMOS.length - 1) % DEMOS.length].layout
+  const currentLayout = applied ? demo.layout : prevLayout
 
   useEffect(() => {
     let c = false
@@ -25,110 +69,53 @@ function EditorDemo() {
     const run = async () => {
       setApplied(false); setTyping(''); setSent(false); setVisibleSteps(0); setTransforming(false)
       await w(1000)
-      for (let i = 0; i <= step.cmd.length; i++) { if (c) return; setTyping(step.cmd.slice(0, i)); await w(35) }
-      await w(500); if (c) return; setSent(true)
-      for (let i = 1; i <= step.steps.length; i++) { await w(450); if (c) return; setVisibleSteps(i) }
+      for (let i = 0; i <= demo.cmd.length; i++) { if (c) return; setTyping(demo.cmd.slice(0, i)); await w(30) }
+      await w(400); if (c) return; setSent(true)
+      for (let i = 1; i <= demo.steps.length; i++) { await w(500); if (c) return; setVisibleSteps(i) }
       await w(200); if (c) return
-      setTransforming(true)
-      await w(400); if (c) return
-      setApplied(true)
-      await w(600); if (c) return
-      setTransforming(false)
-      await w(3000); if (c) return
-      setPhase(p => (p + 1) % DEMO_STEPS.length)
+      setTransforming(true); await w(400); if (c) return
+      setApplied(true); await w(500); if (c) return
+      setTransforming(false); await w(3500); if (c) return
+      setPhase(p => (p + 1) % DEMOS.length)
     }
     run(); return () => { c = true }
   }, [phase])
-
-  const t3d = transforming ? 'perspective(1200px) rotateY(-3deg) rotateX(2deg) scale(0.97)' : applied ? 'perspective(1200px) rotateY(0deg) rotateX(0deg) scale(1)' : 'perspective(1200px) rotateY(0deg) rotateX(0deg) scale(1)'
 
   return (
     <section className="relative z-10 max-w-5xl mx-auto px-6 py-20">
       <div className="text-center mb-12">
         <p className="text-[12px] font-semibold uppercase tracking-widest text-accent mb-3">Éditeur IA</p>
         <h2 className="text-3xl md:text-4xl font-black tracking-tight mb-4">Modifiez tout. En temps réel.</h2>
-        <p className="text-sm text-black/35 max-w-md mx-auto">Décrivez le changement. Regardez votre site se transformer.</p>
+        <p className="text-sm text-black/35 max-w-md mx-auto">Layout, couleurs, sections, images — décrivez et regardez.</p>
       </div>
 
       <div className="relative">
-        {/* Site preview — with 3D transform */}
-        <div className="rounded-2xl overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.12)] border border-black/[0.06]" style={{ transform: t3d, transition: 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)' }}>
-          {/* Chrome */}
+        {/* Site preview with 3D */}
+        <div className="rounded-2xl overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.12)] border border-black/[0.06]" style={{ transform: transforming ? 'perspective(1200px) rotateY(-4deg) rotateX(2deg) scale(0.96)' : 'perspective(1200px) rotateY(0) rotateX(0) scale(1)', transition: 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)' }}>
           <div className="flex items-center gap-2 px-4 py-2.5 bg-[#fafafa] border-b border-black/[0.06]">
             <div className="flex gap-1.5"><div className="w-3 h-3 rounded-full bg-[#ff5f57]" /><div className="w-3 h-3 rounded-full bg-[#febc2e]" /><div className="w-3 h-3 rounded-full bg-[#28c840]" /></div>
             <div className="flex-1 mx-8"><div className="bg-white rounded-lg px-4 py-1.5 text-[11px] text-black/25 text-center font-mono border border-black/[0.04]">mon-business.novaos.io</div></div>
           </div>
-
-          {/* Glowing border during transform */}
-          <div className="relative" style={{ boxShadow: transforming ? `inset 0 0 60px ${step.accent}15, 0 0 30px ${step.accent}10` : 'none', transition: 'box-shadow 0.4s' }}>
-            <div style={{ background: current.bg, transition: 'background 0.5s ease' }}>
-              <div className="p-5 md:p-6">
-                {/* Nav */}
-                <div className="flex items-center justify-between mb-5 pb-3" style={{ borderBottom: `1px solid ${current.border}`, transition: 'all 0.5s' }}>
-                  <span className="text-sm font-black" style={{ color: current.text, transition: 'color 0.5s' }}>Mon Business</span>
-                  <div className="hidden md:flex gap-4 text-[10px]" style={{ color: current.sub, transition: 'color 0.5s' }}><span>Services</span><span>À propos</span><span>Avis</span><span>Contact</span></div>
-                  <div className="px-4 py-1.5 rounded-full text-[9px] font-bold text-white" style={{ background: current.accent, transition: 'background 0.5s' }}>Réserver</div>
-                </div>
-                {/* Hero */}
-                <div className="relative h-44 md:h-52 rounded-2xl overflow-hidden mb-5" style={{ transform: transforming ? 'scale(0.98)' : 'scale(1)', transition: 'transform 0.5s' }}>
-                  <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=900&q=70" alt="" className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 flex items-center" style={{ background: `linear-gradient(135deg, ${current.bg}ee, ${current.heroBg})`, transition: 'all 0.5s' }}>
-                    <div className="px-8">
-                      <div className="text-[10px] uppercase tracking-widest mb-2" style={{ color: current.accent, transition: 'color 0.5s' }}>Depuis 2015</div>
-                      <div className="text-xl md:text-2xl font-black mb-2 leading-tight" style={{ color: current.text, transition: 'color 0.5s' }}>Votre titre<br/>accrocheur ici</div>
-                      <div className="text-[11px] mb-4 max-w-xs" style={{ color: current.sub, transition: 'color 0.5s' }}>Sous-titre descriptif généré par l'IA</div>
-                      <div className="flex gap-2">
-                        <div className="px-5 py-2 rounded-full text-[10px] font-bold text-white" style={{ background: current.accent, transition: 'background 0.5s' }}>Commencer</div>
-                        <div className="px-5 py-2 rounded-full text-[10px] font-bold" style={{ color: current.text, border: `1px solid ${current.border}`, transition: 'all 0.5s' }}>En savoir plus</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                {/* Stats */}
-                <div className="flex justify-around mb-5 py-3 rounded-xl" style={{ background: current.cardBg, border: `1px solid ${current.border}`, transition: 'all 0.5s' }}>
-                  {[{ n: '15+', l: 'Années' }, { n: '500+', l: 'Clients' }, { n: '4.9/5', l: 'Google' }, { n: '24h', l: 'Réponse' }].map(s => (
-                    <div key={s.n} className="text-center"><div className="text-base font-black" style={{ color: current.accent, transition: 'color 0.5s' }}>{s.n}</div><div className="text-[7px]" style={{ color: current.sub, transition: 'color 0.5s' }}>{s.l}</div></div>
-                  ))}
-                </div>
-                {/* Cards */}
-                <div className="grid grid-cols-3 gap-3">
-                  {[{ e: '💡', s: 'Consulting' }, { e: '📚', s: 'Formation' }, { e: '🎯', s: 'Coaching' }].map((s, i) => (
-                    <div key={i} className="p-4 rounded-xl" style={{ background: current.cardBg, border: `1px solid ${current.border}`, transition: 'all 0.5s', transform: transforming ? `translateY(${(i - 1) * 3}px)` : 'translateY(0)' }}>
-                      <span className="text-lg block mb-2">{s.e}</span>
-                      <div className="text-[10px] font-bold mb-1" style={{ color: current.text, transition: 'color 0.5s' }}>{s.s}</div>
-                      <div className="text-[8px] mb-2" style={{ color: current.sub, transition: 'color 0.5s' }}>Description du service premium</div>
-                      <div className="text-[9px] font-bold" style={{ color: current.accent, transition: 'color 0.5s' }}>Dès 150 CHF</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+          <div style={{ opacity: transforming ? 0.7 : 1, filter: transforming ? 'blur(1px)' : 'none', transition: 'all 0.4s' }}>
+            <SiteLayout layout={currentLayout} transforming={transforming} />
           </div>
         </div>
 
-        {/* Floating AI bubble — glassy, positioned over the site */}
-        <div className="absolute -bottom-6 right-4 md:right-8 w-[260px] md:w-[300px] z-10">
-          <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(24px)', border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 12px 48px rgba(0,0,0,0.12)' }}>
-            {/* Header */}
+        {/* Glassy AI bubble */}
+        <div className="absolute -bottom-8 right-4 md:right-8 w-[260px] md:w-[300px] z-10">
+          <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(24px)', border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 16px 56px rgba(0,0,0,0.14)' }}>
             <div className="flex items-center justify-between px-4 py-2.5 border-b border-black/[0.06]">
-              <div className="flex items-center gap-2">
-                <div className="w-5 h-5 rounded-lg bg-accent/15 flex items-center justify-center text-[10px]">✨</div>
-                <span className="text-[11px] font-bold text-black">Nova AI</span>
-              </div>
-              <div className="flex gap-1"><div className="w-4 h-4 rounded-full bg-black/[0.04] flex items-center justify-center text-[7px] text-black/20">×</div></div>
+              <div className="flex items-center gap-2"><div className="w-5 h-5 rounded-lg bg-accent/15 flex items-center justify-center text-[10px]">✨</div><span className="text-[11px] font-bold text-black">Nova AI</span></div>
+              <div className="w-4 h-4 rounded-full bg-black/[0.04] flex items-center justify-center text-[7px] text-black/20">×</div>
             </div>
-
-            {/* Messages */}
-            <div className="px-4 py-3 flex flex-col gap-2 min-h-[120px] justify-end">
+            <div className="px-4 py-3 flex flex-col gap-2 min-h-[130px] justify-end">
               {sent && (
                 <>
-                  <div className="self-end"><div className="px-3 py-2 rounded-2xl rounded-br-sm text-[10px] text-black/50" style={{ background: `${step.accent}12` }}>{step.cmd}</div></div>
+                  <div className="self-end"><div className="px-3 py-2 rounded-2xl rounded-br-sm bg-accent/10 text-[10px] text-black/50 max-w-[220px]">{demo.cmd}</div></div>
                   <div className="flex flex-col gap-1.5 mt-1">
-                    {step.steps.map((s, i) => i < visibleSteps && (
+                    {demo.steps.map((s, i) => i < visibleSteps && (
                       <div key={i} className="flex items-center gap-1.5 text-[10px]">
-                        {i < visibleSteps - 1 || applied
-                          ? <span className="text-accent">✓</span>
-                          : <span className="w-2.5 h-2.5 border-[1.5px] border-accent/30 border-t-accent rounded-full animate-spin shrink-0" />}
+                        {i < visibleSteps - 1 || applied ? <span className="text-accent">✓</span> : <span className="w-2.5 h-2.5 border-[1.5px] border-accent/30 border-t-accent rounded-full animate-spin shrink-0" />}
                         <span className={i < visibleSteps - 1 || applied ? 'text-black/30' : 'text-black/50'}>{s}</span>
                       </div>
                     ))}
@@ -136,18 +123,10 @@ function EditorDemo() {
                 </>
               )}
             </div>
-
-            {/* Input */}
             <div className="px-3 pb-3">
               <div className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-black/[0.06] bg-white/60">
                 <div className="flex-1 text-[10px] min-h-[14px]">
-                  {!sent ? (
-                    <>
-                      <span className="text-black/50">{typing}</span>
-                      {typing && typing.length < step.cmd.length && <span className="inline-block w-[1px] h-[10px] bg-accent ml-0.5 align-middle animate-pulse" />}
-                      {!typing && <span className="text-black/20">Ask me anything...</span>}
-                    </>
-                  ) : <span className="text-black/20">Ask me anything...</span>}
+                  {!sent ? (<><span className="text-black/50">{typing}</span>{typing && typing.length < demo.cmd.length && <span className="inline-block w-[1px] h-[10px] bg-accent ml-0.5 align-middle animate-pulse" />}{!typing && <span className="text-black/20">Ask me anything...</span>}</>) : <span className="text-black/20">Ask me anything...</span>}
                 </div>
                 <div className="w-5 h-5 rounded-full bg-accent flex items-center justify-center text-white text-[8px]">↑</div>
               </div>
@@ -156,8 +135,8 @@ function EditorDemo() {
         </div>
       </div>
 
-      <div className="mt-12 text-center">
-        <p className="text-[11px] text-black/20">Couleurs · Textes · Images · Polices · Sections · Layout — tout se change en une phrase</p>
+      <div className="mt-14 text-center">
+        <p className="text-[11px] text-black/20">Layout · Couleurs · Textes · Images · Polices · Sections — tout se change en une phrase</p>
       </div>
     </section>
   )
